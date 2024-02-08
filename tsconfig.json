@@ -1,12 +1,12 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "NodeNext",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "es2017"
-  }
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"module": "NodeNext",
+		"noEmit": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "es2017"
+	}
 }

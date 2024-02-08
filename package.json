@@ -1,12 +1,14 @@
 {
-  "dependencies": {
-    "@google-labs/breadboard": "0.10.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.16",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
-  },
-  "scripts": {},
-  "type": "module"
+	"dependencies": {
+		"@google-labs/breadboard": "0.10.1"
+	},
+	"devDependencies": {
+		"@types/node": "^20.11.16",
+		"tsx": "^4.7.0",
+		"typescript": "^5.3.3"
+	},
+	"scripts": {
+		"test": "tsx src/examples/making-a-kit/index.ts"
+	},
+	"type": "module"
 }
