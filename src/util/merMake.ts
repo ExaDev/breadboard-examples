@@ -1,9 +1,9 @@
-import { GraphDescriptor, InputValues, Lambda, toMermaid } from "@google-labs/breadboard";
+import { GraphDescriptor, Lambda, toMermaid } from "@google-labs/breadboard";
 import fs from "fs";
 import path from "path";
 
 export async function merMake({ graph, destination: output = process.cwd() }: {
-  graph: GraphDescriptor | Lambda<InputValues, Required<{ output: string }>>,
+	graph: GraphDescriptor | Lambda<any, any>,
 	destination?: string;
 }) {
   if (fs.lstatSync(output).isDirectory()) {
