@@ -1,3 +1,5 @@
+#! /usr/bin/env npx -y tsx
+
 import { addKit, board, InputValues } from "@google-labs/breadboard";
 import { KitBuilder } from "@google-labs/breadboard/kits";
 import { merMake } from "../../util/merMake.js";

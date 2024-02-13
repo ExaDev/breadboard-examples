@@ -1,3 +1,5 @@
+#! /usr/bin/env npx -y tsx
+
 import { base, board } from "@google-labs/breadboard";
 import { merMake } from "../../util/merMake.js";
 

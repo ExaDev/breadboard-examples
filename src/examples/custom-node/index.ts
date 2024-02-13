@@ -1,4 +1,6 @@
-import { code, board } from "@google-labs/breadboard";
+#! /usr/bin/env npx -y tsx
+
+import { board, code } from "@google-labs/breadboard";
 import { merMake } from "../../util/merMake.js";
 
 const greet = code<{ name: string }>(({ name }) => {
