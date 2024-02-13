@@ -16,52 +16,52 @@ classDef slotted stroke:#a64d79
 ## JSON
 ```json
 {
-  "edges": [
-    {
-      "from": "input-1",
-      "to": "output-3",
-      "out": "message",
-      "in": "output"
-    }
-  ],
-  "nodes": [
-    {
-      "id": "output-3",
-      "type": "output",
-      "configuration": {
-        "schema": {
-          "type": "object",
-          "properties": {
-            "output": {
-              "type": "string",
-              "title": "output"
-            }
-          },
-          "required": [
-            "output"
-          ]
-        }
-      }
-    },
-    {
-      "id": "input-1",
-      "type": "input",
-      "configuration": {
-        "schema": {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": "string",
-              "title": "output"
-            }
-          },
-          "required": [
-            "message"
-          ]
-        }
-      }
-    }
-  ],
-  "graphs": {}
+	"edges": [
+		{
+			"from": "input-1",
+			"to": "output-3",
+			"out": "message",
+			"in": "output"
+		}
+	],
+	"nodes": [
+		{
+			"id": "output-3",
+			"type": "output",
+			"configuration": {
+				"schema": {
+					"type": "object",
+					"properties": {
+						"output": {
+							"type": "string",
+							"title": "output"
+						}
+					},
+					"required": [
+						"output"
+					]
+				}
+			}
+		},
+		{
+			"id": "input-1",
+			"type": "input",
+			"configuration": {
+				"schema": {
+					"type": "object",
+					"properties": {
+						"message": {
+							"type": "string",
+							"title": "output"
+						}
+					},
+					"required": [
+						"message"
+					]
+				}
+			}
+		}
+	],
+	"graphs": {}
 }
 ```
