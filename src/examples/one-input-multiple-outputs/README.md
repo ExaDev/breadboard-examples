@@ -2,8 +2,6 @@
 ```mermaid
 %%{init: 'themeVariables': { 'fontFamily': 'Fira Code, monospace' }}%%
 graph TD;
-outputOne{{"output <br> id='outputOne'"}}:::output -- all --> outputThree{{"output <br> id='outputThree'"}}:::output
-outputTwo{{"output <br> id='outputTwo'"}}:::output -- all --> outputThree{{"output <br> id='outputThree'"}}:::output
 input1[/"input <br> id='input-1'"/]:::input -- "partOne->outputMessageOne" --> outputOne{{"output <br> id='outputOne'"}}:::output
 input1[/"input <br> id='input-1'"/]:::input -- "partTwo->outputMessageTwo" --> outputTwo{{"output <br> id='outputTwo'"}}:::output
 classDef default stroke:#ffab40,fill:#fff2ccff,color:#000
@@ -24,18 +22,6 @@ classDef slotted stroke:#a64d79
   "url": ".",
   "edges": [
     {
-      "from": "outputOne",
-      "to": "outputThree",
-      "out": "*",
-      "in": ""
-    },
-    {
-      "from": "outputTwo",
-      "to": "outputThree",
-      "out": "*",
-      "in": ""
-    },
-    {
       "from": "input-1",
       "to": "outputOne",
       "out": "partOne",
@@ -49,25 +35,6 @@ classDef slotted stroke:#a64d79
     }
   ],
   "nodes": [
-    {
-      "id": "outputThree",
-      "type": "output",
-      "configuration": {}
-    },
-    {
-      "id": "outputOne",
-      "type": "output",
-      "configuration": {
-        "schema": {
-          "type": "object",
-          "properties": {
-            "outputMessageOne": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
     {
       "id": "outputTwo",
       "type": "output",
@@ -102,6 +69,20 @@ classDef slotted stroke:#a64d79
             "partOne",
             "partTwo"
           ]
+        }
+      }
+    },
+    {
+      "id": "outputOne",
+      "type": "output",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "outputMessageOne": {
+              "type": "string"
+            }
+          }
         }
       }
     }

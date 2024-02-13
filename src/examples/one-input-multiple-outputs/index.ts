@@ -2,7 +2,6 @@ import { base, board, BoardRunner, InputValues } from "@google-labs/breadboard";
 import { merMake } from "../../util/merMake.js";
 
 const myBoardSerialized = await board<InputValues>(
-  // (inputs, { output }) => {
   (inputs) => {
 
     const { partOne, partTwo } = inputs;
@@ -27,19 +26,10 @@ const myBoardSerialized = await board<InputValues>(
       },
     });
 
-    const outputThree = base.output({
-      $id: "outputThree",
-    });
-
     partOne.as("outputMessageOne").to(outputOne);
     partTwo.as("outputMessageTwo").to(outputTwo);
 
-    outputOne.to(outputThree)
-    outputTwo.to(outputThree)
-
-    // return { outputOne, outputTwo };
-    // return output({ outputOne, outputTwo });
-    return outputThree;
+    return outputTwo;
   }
 ).serialize({
   title: "My Board Serialized",
