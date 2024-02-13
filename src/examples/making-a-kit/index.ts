@@ -1,3 +1,5 @@
+#! /usr/bin/env npx -y tsx
+
 import { addKit, board, InputValues } from "@google-labs/breadboard";
 import { KitBuilder } from "@google-labs/breadboard/kits";
 import { merMake } from "../../util/merMake.js";
@@ -18,7 +20,7 @@ const stringManipulationKit = new KitBuilder({
 const kitInstance = addKit(stringManipulationKit);
 
 const myBoard = board<InputValues, { output: string; }>(
-	(inputs, {output}) => {
+	(inputs, { output }) => {
 		const joinerNode = kitInstance.joiner(inputs);
 		const joined = joinerNode.result.as("joined");
 
@@ -34,9 +36,9 @@ const myBoard = board<InputValues, { output: string; }>(
 	}
 );
 
-console.log(JSON.stringify(await myBoard({a: "hello", b: "world"}), null, 2));
+console.log(JSON.stringify(await myBoard({ a: "hello", b: "world" }), null, 2));
 
 await merMake({
 	graph: myBoard,
 	destination: import.meta.dirname
-})
+});
