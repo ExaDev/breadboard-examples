@@ -18,7 +18,7 @@ export async function merMake({ graph, destination: output = process.cwd() }: {
 	}
 	const mermaid = toMermaid(graph);
 	const condeFence = ["## Mermaid", "```mermaid", mermaid, "```"];
-	const json = JSON.stringify(graph, null, 2);
+	const json = JSON.stringify(graph, null, "\t");
 	const jsonCodeFence = ["## JSON", "```json", json, "```"];
 	console.debug("Writing to", output);
 	fs.writeFileSync(output, [
