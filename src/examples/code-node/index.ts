@@ -1,7 +1,6 @@
 #! /usr/bin/env npx -y tsx
 
 import {
-	InputValues,
 	OutputValues,
 	board,
 	code,
