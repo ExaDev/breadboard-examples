@@ -8,7 +8,11 @@
 		"typescript": "^5.3.3"
 	},
 	"scripts": {
-		"test": "tsx src/examples/making-a-kit/index.ts"
+		"making-a-kit": "tsx src/examples/making-a-kit/index.ts",
+		"hello-world": "tsx src/examples/hello-world/index.ts",
+		"code-node": "tsx src/examples/code-node/index.ts",
+		"multiple-inputs-one-output": "tsx src/examples/multiple-inputs-one-output/index.ts",
+		"one-input-multiple-outputs": "tsx src/examples/one-input-multiple-outputs/index.ts"
 	},
 	"type": "module"
 }
