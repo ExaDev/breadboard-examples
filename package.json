@@ -1,10 +1,11 @@
 {
 	"dependencies": {
-		"@google-labs/breadboard": "0.10.1"
+		"@google-labs/breadboard": "0.10.1",
+		"@slack/web-api": "^7.0.2"
 	},
 	"devDependencies": {
 		"@types/node": "^20.11.16",
-		"tsx": "^4.7.0",
+		"tsx": "^4.7.1",
 		"typescript": "^5.3.3"
 	},
 	"scripts": {
@@ -12,7 +13,8 @@
 		"hello-world": "tsx src/examples/hello-world/index.ts",
 		"code-node": "tsx src/examples/code-node/index.ts",
 		"multiple-inputs-one-output": "tsx src/examples/multiple-inputs-one-output/index.ts",
-		"one-input-multiple-outputs": "tsx src/examples/one-input-multiple-outputs/index.ts"
+		"one-input-multiple-outputs": "tsx src/examples/one-input-multiple-outputs/index.ts",
+		"wiring-nodes": "tsx src/examples/wiring-nodes/index.ts"
 	},
 	"type": "module"
 }
