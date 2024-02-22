@@ -1,7 +1,6 @@
 {
 	"dependencies": {
-		"@google-labs/breadboard": "0.10.1",
-		"@slack/web-api": "^7.0.2"
+		"@google-labs/breadboard": "0.10.1"
 	},
 	"devDependencies": {
 		"@types/node": "^20.11.16",
