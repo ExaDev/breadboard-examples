@@ -3,6 +3,7 @@
 import { board } from "@google-labs/breadboard";
 import { merMake } from "../../util/merMake.js";
 
+
 const myBoard = board<{ message: string; }>(({ message }, { output }) => {
 	const renamedOutput = message.as("output").to(output());
 	return renamedOutput;

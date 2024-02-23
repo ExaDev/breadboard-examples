@@ -1,6 +1,7 @@
 {
 	"dependencies": {
-		"@google-labs/breadboard": "0.10.1"
+		"@google-labs/breadboard": "0.10.1",
+		"@xenova/transformers": "^2.15.1"
 	},
 	"devDependencies": {
 		"@types/node": "^20.11.16",
@@ -12,7 +13,8 @@
 		"hello-world": "tsx src/examples/hello-world/index.ts",
 		"code-node": "tsx src/examples/code-node/index.ts",
 		"multiple-inputs-one-output": "tsx src/examples/multiple-inputs-one-output/index.ts",
-		"one-input-multiple-outputs": "tsx src/examples/one-input-multiple-outputs/index.ts"
+		"one-input-multiple-outputs": "tsx src/examples/one-input-multiple-outputs/index.ts",
+		"code-nodes-llm":"tsx src/examples/code-nodes-llm/index.ts"
 	},
 	"type": "module"
 }
