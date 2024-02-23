@@ -1,20 +1,19 @@
 #! /usr/bin/env npx -y tsx
 
 import {
-	InputValues,
 	OutputValues,
 	board,
-	code,
+	code
 } from "@google-labs/breadboard";
 import { merMake } from "../../util/merMake.js";
 
 // Define code node outside board
-const toUppercase = code<{ input: string }, OutputValues>(({ input }) => {
+const toUppercase = code<{ input: string; }, OutputValues>(({ input }) => {
 	const uppercase = input.toUpperCase();
 	return { uppercase };
 });
 
-const myBoard = board<{ greet: string; subject: string }, OutputValues>(
+const myBoard = board<{ greet: string; subject: string; }, OutputValues>(
 	({ greet, subject }) => {
 		const uppercase = toUppercase({ input: greet });
 
