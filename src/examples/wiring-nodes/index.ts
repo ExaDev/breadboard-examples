@@ -37,5 +37,9 @@ console.log(JSON.stringify(await myBoard({ text: "hello", num: 2 }), null, 2));
 
 await merMake({
 	graph: myBoard,
+	metadata: {
+		// title: "",
+		// description: ""
+	},
 	destination: import.meta.dirname,
 });
