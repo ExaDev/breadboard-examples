@@ -1,9 +1,9 @@
-import { BoardRunner, GraphDescriptor, Kit, addKit, asRuntimeKit, board, code } from "@google-labs/breadboard";
-import * as fs from 'fs';
+import { BoardRunner, addKit, asRuntimeKit, board, code } from "@google-labs/breadboard";
 import { merMake } from "../../util/merMake.js";
 import { KitBuilder } from "@google-labs/breadboard/kits";
 
-const myMessage = fs.readFileSync('./src/examples/code-nodes-llm/text.txt', 'utf8');
+const myMessage = `Dogs are an amazing part of life and can bring joy to your whole family, but when your little fur ball gets hurt or sick it can be a scary time. In this article I will be looking at the 9 healthiest dog breeds and how they made the list.
+Though these breeds are proven to be resilient there can still be complications as all dogs are different. If you are getting a dog from a breeder make sure it is a reputable one and if you are adopting contact your veterinarian to get your dog checked out. No dogs will be 100% healthy their entire life but this list of dogs can hold their own.`
 
 const xenovaPipe = code(async ({ message }) => {
     // dynamic import
@@ -25,14 +25,7 @@ const myKit = new KitBuilder({
         }
     )
 })
-
 const kitInstance = addKit(myKit);
-//  using code node directly
-const myBoard = board(({ message }) => {
-    const { output } = xenovaPipe(message)
-    return { output };
-});
-
 //  using code node via kit
 const kitBoard = board(({ message }) => {
     const { output } = kitInstance.pipe(message)
@@ -62,7 +55,3 @@ merMake({
     destination: import.meta.dirname,
 });
 
-
-console.log("output code node only", JSON.stringify(await myBoard({ message: myMessage }), null, 2));
-
-// TODO Workout if it's possible to run board from JSON without code nodes being added to kit
