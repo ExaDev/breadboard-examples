@@ -8,7 +8,6 @@ import {
 import { merMake } from "../../util/merMake.js";
 import Core from "@google-labs/core-kit";
 
-// Define code node outside board
 const toUppercase = code<{ input: string }, OutputValues>(({ input }) => {
 	const uppercase = input.toUpperCase();
 	return { uppercase };
@@ -18,7 +17,6 @@ const myBoard = board<{ greet: string; subject: string }, OutputValues>(
 	({ greet, subject }) => {
 		const uppercase = toUppercase({ input: greet });
 
-		// Define code node inside board
 		const concat = code(({ base, toConcat }) => {
 			const concatenated = (base as string).concat(toConcat as string);
 			return { concatenated };
@@ -27,7 +25,6 @@ const myBoard = board<{ greet: string; subject: string }, OutputValues>(
 		greet.as("base").to(concat);
 		subject.as("toConcat").to(concat);
 
-		// Anonymous code node
 		const reversed = concat.concatenated.as("text").to(
 			code(({ text }) => {
 				const reversed = (text as string).split("").reverse().join("");
@@ -51,7 +48,8 @@ console.log(
 	JSON.stringify(
 		await runner.runOnce(
 			{ greet: "Hello", subject: "World" },
-			{ kits: [asRuntimeKit(Core)] }),
+			{ kits: [asRuntimeKit(Core)] }
+		),
 		null,
 		2
 	)

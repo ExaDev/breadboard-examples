@@ -1,5 +1,3 @@
-#! /usr/bin/env npx -y tsx
-
 import { base, board, BoardRunner, InputValues } from "@google-labs/breadboard";
 import { run, RunConfig } from "@google-labs/breadboard/harness";
 import { merMake } from "../../util/merMake.js";
