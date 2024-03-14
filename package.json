@@ -1,8 +1,13 @@
 {
 	"dependencies": {
+		"@anthropic-ai/tokenizer": "^0.0.4",
+		"@exadev/breadboard-kits": "^0.10.1",
 		"@google-labs/breadboard": "0.11.2",
 		"@google-labs/core-kit": "0.4.0",
-		"@xenova/transformers": "^2.15.1"
+		"@google-labs/template-kit": "^0.2.0",
+		"@xenova/transformers": "^2.15.1",
+		"js-tiktoken": "^1.0.10",
+		"puppeteer": "^22.4.1"
 	},
 	"devDependencies": {
 		"@types/node": "^20.11.20",
