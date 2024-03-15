@@ -1,16 +1,17 @@
 /* eslint-disable no-constant-condition */
 import claude from "@anthropic-ai/tokenizer/claude.json" assert { type: "json" };
-import { InputValues, NodeValue, OutputValues, addKit, asRuntimeKit } from "@google-labs/breadboard";
+import { InputValues, NodeValue, OutputValues, addKit, asRuntimeKit, code } from "@google-labs/breadboard";
 import { KitBuilder } from "@google-labs/breadboard/kits";
 import { Tiktoken, TiktokenBPE } from "js-tiktoken";
 import * as puppeteer from "puppeteer";
 import { Browser, JSHandle, Page } from "puppeteer";
 import * as readline from 'readline/promises';
 import { chromeVersions } from "./chromeVersions.js";
-import chromeStatusApiFeatures, { ChromeStatusV1ApiFeature } from "./chromeStatusApiFeatures.js";
+import chromeStatusApiFeatures, { ChromeStatusFeatures, ChromeStatusV1ApiFeature, getChromeStatusV1Feature } from "./chromeStatusApiFeatures.js";
 import chromeStatusFeaturesV2 from "./chromeStatusFeaturesV2.js";
 import { list } from "@exadev/breadboard-kits/types";
 import fs from "fs";
+import { clear } from "console";
 
 
 export function getTokenizer(): Tiktoken {
@@ -96,19 +97,18 @@ async function extractFeatureResource(id: string): Promise<pageContents> {
 	return Promise.resolve({ contents });
 }
 
-async function test2() {
-	const userInput = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout
-	});
-	const answer = await userInput.question('Please select a feature id to extract: ');
-	console.log(answer)
-}
+const selectRandom = code<{ input: ChromeStatusFeatures }, OutputValues & { selected: ChromeStatusV1ApiFeature }>(async ({ input }) => {
+	const myList = input["input"]["features"]
 
-async function getFeatureResources(input: InputValues): Promise<OutputValues> {
-	const { list }: list.List = input as list.List;
+	const selected = myList[Math.floor(Math.random() * myList.length)]
+
+	return { selected: selected}
+})
+
+const getFeatureResources = code<{ input: ChromeStatusFeatures }, OutputValues>(async ({ input }) => {
 	const featuresMap = new Map<string, feature>();
-	for (const json of list["features"]) {
+
+	for (var json of input["features"]) {
 		const feature = {
 			id: json["id"],
 			name: json["name"],
@@ -119,14 +119,13 @@ async function getFeatureResources(input: InputValues): Promise<OutputValues> {
 		};
 
 		featuresMap.set(`${json["id"]}`, feature);
-
 	}
+
+	const featureResources: featureDocuments[] = [];
 	const userInput = readline.createInterface({
 		input: process.stdin,
 		output: process.stdout
 	});
-
-	const featureResources: featureDocuments[] = [];
 
 	try {
 		while (true) {
@@ -187,12 +186,15 @@ async function getFeatureResources(input: InputValues): Promise<OutputValues> {
 		userInput.close();
 	}
 	return Promise.resolve({ featureResources });
-}
+})
+
 
 async function getResourcesForFeature({ feature }: InputValues & { feature: ChromeStatusV1ApiFeature }): Promise<OutputValues> {
-	const featureId = feature.id
-	const featureDocs = feature.resources.docs
-	const featureSamples = feature.resources.samples
+	const selectedFeature = feature["selected"]
+	
+	const featureId = selectedFeature.id
+	const featureDocs = selectedFeature.resources.docs
+	const featureSamples = selectedFeature.resources.samples
 	const resources: featureDocuments[] = []
 
 	// extract feature content
@@ -234,13 +236,14 @@ async function getResourcesForFeature({ feature }: InputValues & { feature: Chro
 	return Promise.resolve({ resources });
 }
 
-const featureKit = new KitBuilder({
+export const FeatureKit = new KitBuilder({
 	url: "."
 }).build({
 	versions: async () => (
 		{
 			output: await chromeVersions()
-		}),
+		}
+	),
 	chromeStatusApiFeatures: async () => (
 		{
 			output: await chromeStatusApiFeatures()
@@ -250,12 +253,20 @@ const featureKit = new KitBuilder({
 		output: await chromeStatusFeaturesV2()
 	}),
 	getFeatureResources: async (input) => ({
-		output: await getFeatureResources(input)
+		output: await getFeatureResources({ input: input as ChromeStatusFeatures })
 	}),
-	getResourcesForFeature: async (feature) => (
+	getResourcesForFeature: async ({feature}) => (
 		{
-			output: await getResourcesForFeature(feature as { feature: ChromeStatusV1ApiFeature })
-		})
+			output: await getResourcesForFeature({feature : feature as ChromeStatusV1ApiFeature })
+		}
+	),
+	selectRandomFeature: async (features) => (
+		{
+			output:  await selectRandom({ input: features as ChromeStatusFeatures })
+		}
+	)
 })
 
-export default featureKit;
+
+export type FeatureKit = InstanceType<typeof FeatureKit>;
+export default FeatureKit;

@@ -1,5 +1,5 @@
 
-import { BoardRunner, board, addKit, asRuntimeKit, InputValues, base,code, OutputValues } from "@google-labs/breadboard";
+import { BoardRunner, board, addKit, asRuntimeKit, InputValues, base, code, OutputValues } from "@google-labs/breadboard";
 import { KitBuilder } from "@google-labs/breadboard/kits";
 
 export function parametersFromTemplate(template: string): string[] {
@@ -28,7 +28,7 @@ const concat = code<{ input: string[]; }, OutputValues>(({ input }) => {
   });
 
 
-const template2 = code<{inputs: InputValues,  template:string}, OutputValues>(({ inputs, template }) =>  {
+const templatePrompt = code<{inputs: InputValues,  template:string}, OutputValues>(({ inputs, template }) =>  {
 	const parameters = parametersFromTemplate(template);
 	
 	if (!parameters.length) return { string: template };
@@ -53,39 +53,21 @@ export const StringKit = new KitBuilder({
             output: await concat(list)
         }
 ),
-template: async(inputs, template) => (
+template: async({inputs, template}) => (
 	{
-		output: await template2({inputs:inputs, template:template as string})
+		output: await templatePrompt({inputs: inputs as InputValues, template:template as string})
 	}
 )
-
 });
 
 const kitInstance = addKit(StringKit); 
 
-const kitBoard = board<{ input: string[]}>(
+const kitBoard = board<{input: string[]}>(
 	({input}) => {
 	const output = kitInstance.concat(input)
     return {output};
 });
 
-const serializedBoard = await kitBoard.serialize({
-    title: "Xenova Code Node-Kit Board",
-    description: "Board which performs sentiment analysis using xenova LLM",
-    url: ".",
-})
-
-// running board from json and providing kit at runtime
-const runner = await BoardRunner.fromGraphDescriptor(serializedBoard);
-for await (const stop of runner.run({ kits: [asRuntimeKit(StringKit)] })) {
-    if (stop.type === "input") {
-        stop.inputs = {
-            input: ["a", "b", "c", "d"]
-        };
-    } else if (stop.type === "output") {
-        console.log("output with Kit", JSON.stringify(stop.outputs, null, 2));
-    }
-}
 
 export type StringKit = InstanceType<typeof StringKit>;
 export default StringKit;

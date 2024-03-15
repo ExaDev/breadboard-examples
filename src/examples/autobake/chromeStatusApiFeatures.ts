@@ -192,7 +192,7 @@ export type ChromeStatusV1ApiFeature = {
 	experiment_timeline: string | null;
 };
 
-type ChromeStatusFeatures = {
+export type ChromeStatusFeatures = {
 	total_count: number;
 	features: ChromeStatusV1ApiFeature[];
 };

@@ -46,10 +46,7 @@ classDef slotted stroke:#a64d79
 							"type": "string",
 							"title": "output"
 						}
-					},
-					"required": [
-						"output"
-					]
+					}
 				}
 			}
 		},
