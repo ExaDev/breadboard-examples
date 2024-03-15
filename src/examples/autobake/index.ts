@@ -17,8 +17,6 @@ const objectK = addKit(ObjectKit)
 const coreKit = addKit(Core)
 const objectKit = addKit(ObjectKit)
 
-
-
 function filterAttributes(obj: any) {
     // recursively remove any falsy attributes
 
@@ -49,6 +47,7 @@ function filterAttributes(obj: any) {
         }
         return newArray
     }
+
     return obj
 }
 
@@ -57,8 +56,6 @@ const recursivelyFilterEmptyAttributes = coreKit.runJavascript({
     code: filterAttributes.toString(),
     raw: true
 })
-
-
 
 const serverUrl = "https://api.anthropic.com/v1/complete";
 
@@ -85,23 +82,19 @@ const prompt = [
     "```",
 ].join("/n");
 
-type identifiable = { id: number }
-type identifiableArray = identifiable[]
-
-const selectRandom = code<{ list: identifiableArray }, OutputValues>(({ list }) => {
-    {
-        const selected = list[Math.floor(Math.random() * list.length)]
-        return { id: selected.id, selected, list }
-    }
-})
-
 const autoBakeBoard = board(() => {
-    const features = featureKt.chromeStatusApiFeatures({ $id: "ChromeStatusApiFeatures" })
+    const features = featureKt.chromeStatusApiFeatures({ $id: "ChromeStatusApiFeatures" }).output
+    const selected = featureKt.selectRandomFeature({$id:"selectRandomFeature", input: features }).output
+    const featureContent = featureKt.getResourcesForFeature({ $id: "getResourcesForFeature", feature: selected })
 
-    const selected = featureKt.selectRandomFeature({ input: features.output})
+    const filtered = featureKt.filterFeatureAttributes({ feature: selected })
+    // TODO FEED FILTERED FEATURE AND FEATURE TO TEMPLATE
+    // TODO SEND PROMPT TO CLAUDE
 
-    const featureContent = featureKt.getResourcesForFeature({$id: "getResourcesForFeature", feature: selected.output})
-
+    const instructionTemplate = stringKit.template({
+        $id: "claudePromptConstructor",
+        template: prompt,
+    });
 
     const claudeApiKey = config.readEnvVar({
         $id: "getClaudeAPIKey",
@@ -113,12 +106,7 @@ const autoBakeBoard = board(() => {
         ...claudeParams,
     });
 
-    const instructionTemplate = stringKit.template({
-        $id: "claudePromptConstructor",
-        template: prompt,
-    });
-
-    const output = selected.output
+    const output = filtered.output
 
     return { output }
 })

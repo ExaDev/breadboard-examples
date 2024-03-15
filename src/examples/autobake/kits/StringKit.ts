@@ -25,12 +25,12 @@ export function substitute(template: string, values: InputValues) {
 
 const concat = code<{ input: string[]; }, OutputValues>(({ input }) => {
 	return { output: input.join("") };
-  });
+});
 
 
-const templatePrompt = code<{inputs: InputValues,  template:string}, OutputValues>(({ inputs, template }) =>  {
+const templatePrompt = code<{ inputs: InputValues, template: string }, OutputValues>(({ inputs, template }) => {
 	const parameters = parametersFromTemplate(template);
-	
+
 	if (!parameters.length) return { string: template };
 
 	const substitutes = parameters.reduce((acc, parameter) => {
@@ -49,25 +49,16 @@ export const StringKit = new KitBuilder({
 	url: "npm:@exadev/breadboard-kits/kits/StringKit",
 }).build({
 	concat: async (list) => (
-        {
-            output: await concat(list)
-        }
-),
-template: async({inputs, template}) => (
-	{
-		output: await templatePrompt({inputs: inputs as InputValues, template:template as string})
-	}
-)
+		{
+			output: await concat(list)
+		}
+	),
+	template: async ({ inputs, template }) => (
+		{
+			output: await templatePrompt({ inputs: inputs as InputValues, template: template as string })
+		}
+	)
 });
-
-const kitInstance = addKit(StringKit); 
-
-const kitBoard = board<{input: string[]}>(
-	({input}) => {
-	const output = kitInstance.concat(input)
-    return {output};
-});
-
 
 export type StringKit = InstanceType<typeof StringKit>;
 export default StringKit;

@@ -9,9 +9,7 @@ import * as readline from 'readline/promises';
 import { chromeVersions } from "./chromeVersions.js";
 import chromeStatusApiFeatures, { ChromeStatusFeatures, ChromeStatusV1ApiFeature, getChromeStatusV1Feature } from "./chromeStatusApiFeatures.js";
 import chromeStatusFeaturesV2 from "./chromeStatusFeaturesV2.js";
-import { list } from "@exadev/breadboard-kits/types";
 import fs from "fs";
-import { clear } from "console";
 
 
 export function getTokenizer(): Tiktoken {
@@ -97,7 +95,47 @@ async function extractFeatureResource(id: string): Promise<pageContents> {
 	return Promise.resolve({ contents });
 }
 
-const selectRandom = code<{ input: ChromeStatusFeatures }, OutputValues & { selected: ChromeStatusV1ApiFeature }>(async ({ input }) => {
+function filterAttributes(obj: any) {
+    // recursively remove any falsy attributes
+    if (!obj) {
+        return
+    } else if (typeof obj === "object") {
+        const newObj: any = {}
+        for (const [key, value] of Object.entries(obj)) {
+            const newValue = filterAttributes(value)
+            if (newValue) {
+                newObj[key] = newValue
+            }
+        }
+        if (Object.keys(newObj).length > 0) {
+            return newObj
+        } else {
+            return
+        }
+    }
+    // 	if array
+    else if (Array.isArray(obj)) {
+        const newArray: any[] = []
+        for (const value of obj) {
+            const newValue = filterAttributes(value)
+            if (newValue) {
+                newArray.push(newValue)
+            }
+        }
+        return newArray
+    }
+
+    return obj
+}
+
+const filterFeatureAttributes = code<{feature: any}, OutputValues> (({feature}) =>
+{	
+	feature = feature["selected"]
+	const output = filterAttributes(feature)
+	return {filtered: output}
+})
+
+const selectRandom = code<{ input: ChromeStatusFeatures }, OutputValues>(async ({ input }) => {
 	const myList = input["input"]["features"]
 
 	const selected = myList[Math.floor(Math.random() * myList.length)]
@@ -188,7 +226,6 @@ const getFeatureResources = code<{ input: ChromeStatusFeatures }, OutputValues>(
 	return Promise.resolve({ featureResources });
 })
 
-
 async function getResourcesForFeature({ feature }: InputValues & { feature: ChromeStatusV1ApiFeature }): Promise<OutputValues> {
 	const selectedFeature = feature["selected"]
 	
@@ -220,6 +257,7 @@ async function getResourcesForFeature({ feature }: InputValues & { feature: Chro
 		})
 		return documentTokens
 	}
+
 	getTokenCounts()
 	let totalTokens = () => documentTokens.reduce((a, b) => a + b, 0)
 	while (totalTokens() > TOKEN_LIMIT) {
@@ -264,7 +302,10 @@ export const FeatureKit = new KitBuilder({
 		{
 			output:  await selectRandom({ input: features as ChromeStatusFeatures })
 		}
-	)
+	),
+	filterFeatureAttributes: async ({feature}) => ({
+		output: await filterFeatureAttributes({feature: feature})
+	})
 })
 
 
