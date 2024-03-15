@@ -4,9 +4,12 @@
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"noEmit": true,
 		"skipLibCheck": true,
 		"strict": true,
-		"target": "es2017"
+		"target": "es2017",
+		"allowImportingTsExtensions": true,
+		"sourceMap": true
 	}
 }
