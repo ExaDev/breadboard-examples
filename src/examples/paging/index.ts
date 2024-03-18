@@ -10,7 +10,7 @@ import {
 	code,
 } from "@google-labs/breadboard";
 import { RunConfig, run } from "@google-labs/breadboard/harness";
-import Core from "@google-labs/core-kit";
+import Core, { core } from "@google-labs/core-kit";
 import TemplateKit, { templates } from "@google-labs/template-kit";
 import fs from "fs";
 import path from "path";
@@ -258,6 +258,12 @@ const b = board((inputs) => {
 	urlTemplate.url.to(url);
 	url.url.to(output);
 
+	const fetchUrl = core.fetch({ $id: "fetch", method: "GET" });
+	urlTemplate.url.to(fetchUrl);
+	const response = base.output({ $id: "response" });
+	fetchUrl.response.to(response);
+	response.to(output);
+
 	return output;
 });
 
@@ -338,7 +344,7 @@ for await (const runResult of run({
 }
 console.log("\n", "+".repeat(80), "\n");
 for await (const runResult of runner.run({
-	probe: new ProbeClass(),
+	// probe: new ProbeClass(),
 	kits,
 })) {
 	console.log("=".repeat(80));
