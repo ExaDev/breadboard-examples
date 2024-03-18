@@ -7,8 +7,8 @@ import {
 	board,
 	code,
 } from "@google-labs/breadboard";
-import Core, { core } from "@google-labs/core-kit";
-import TemplateKit, { templates } from "@google-labs/template-kit";
+import Core from "@google-labs/core-kit";
+import TemplateKit from "@google-labs/template-kit";
 import fs from "fs";
 import path from "path";
 import { merMake } from "../../util/merMake.ts";
@@ -22,6 +22,16 @@ const pop = code((inputs) => {
 	}
 	return {};
 });
+
+const shift = code((inputs) => {
+	if (inputs.list && Array.isArray(inputs.list) && inputs.list.length > 0) {
+		const list = inputs.list;
+		const item = list.shift();
+		return { item, list };
+	}
+	return {};
+});
+
 const concat = code<{ list: unknown[]; concat: unknown[] }>((inputs) => {
 	if (Array.isArray(inputs.list) && Array.isArray(inputs.concat)) {
 		return {
@@ -81,22 +91,19 @@ const stringJoin = code<
 	};
 });
 
-const calculateNextPage = code<{
-	page?: number;
-	per_page?: number;
-	count?: number;
+const nextPageNo = code<{
+	page: number;
+	per_page: number;
+	count: number;
 }>((inputs) => {
-	// default page to 1
-	const page = inputs.page || 1;
-	const per_page = inputs.per_page || 1;
-	// if count is provided, return empty if this is the last page
-	if (inputs.count) {
-		const totalPages = Math.ceil(inputs.count / per_page);
-		if (page >= totalPages) {
-			return {};
-		}
+	const { page, per_page, count } = inputs;
+	// final page is the last page
+	const finalPage = Math.ceil(count / per_page);
+	const nextPage = page + 1;
+	if (nextPage > finalPage) {
+		return { done: true };
 	}
-	return { page: page + 1, per_page, count: inputs.count };
+	return { page: nextPage, per_page, count: inputs.count };
 });
 
 const calculateTotalPages = code<{ count: number; per_page: number }>(
@@ -106,73 +113,129 @@ const calculateTotalPages = code<{ count: number; per_page: number }>(
 	}
 );
 
+// const pagesArray = code<{ count: number; per_page: number }>((inputs) => {
+// 	const { count, per_page } = inputs;
+// 	const pages = Math.ceil(count / per_page);
+// 	return { pages: Array.from({ length: pages }, (_, i) => i + 1) };
+// });
+
+const pagesArray = code<{
+	count: number;
+	per_page: number;
+	page?: number;
+}>(({ count, per_page, page = 1 }) => {
+	const pages = Math.ceil(count / per_page);
+	const start = page;
+	const end = pages;
+	return {
+		pages: Array.from({ length: end - start + 1 }, (_, i) => i + start),
+	};
+});
+
 const b = board((inputs) => {
-	const openAlexSearchUrl = templates.urlTemplate({
-		$id: "makeURL",
-		template:
-			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
-		// per_page: 1,
-		// page: inputs.page,
-		select: "id",
-		// search: inputs.search,
-	});
+	// const openAlexSearchUrl = templates.urlTemplate({
+	// 	$id: "makeURL",
+	// 	template:
+	// 		"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
+	// 	// per_page: 1,
+	// 	// page: inputs.page,
+	// 	select: "id",
+	// 	// search: inputs.search,
+	// });
 
-	const fetch = core.fetch({
-		// $id: "fetch",
-		method: "GET",
-	});
+	// const fetch = core.fetch({
+	// 	// $id: "fetch",
+	// 	method: "GET",
+	// });
 
-	const output = base.output();
+	// const output = base.output();
 
-	inputs.search.to(openAlexSearchUrl);
-	calculateNextPage({
-		$id: "firstPage",
-	}).to(openAlexSearchUrl);
-	openAlexSearchUrl.url.to(output);
+	// inputs.search.to(openAlexSearchUrl);
+	// calculateNextPage({
+	// 	$id: "firstPage",
+	// }).to(openAlexSearchUrl);
+	// openAlexSearchUrl.url.to(output);
 
-	openAlexSearchUrl.to(fetch);
-	// fetch.response.to(output);
+	// openAlexSearchUrl.to(fetch);
+	// // fetch.response.to(output);
 
-	// const response = fetch.response.as("object").to(spread({}));
-	const response = spread({
-		$id: "response",
-		object: fetch.response,
-	});
-	// response.to(output);
-	response.meta.to(output);
+	// // const response = fetch.response.as("object").to(spread({}));
+	// const response = spread({
+	// 	$id: "response",
+	// 	object: fetch.response,
+	// });
+	// // response.to(output);
+	// response.meta.to(output);
 
-	// const meta = response.meta.as("object").to(spread({}));
-	const meta = spread({
-		$id: "meta",
-		object: response.meta,
-	});
-	// meta.to(output);
+	// // const meta = response.meta.as("object").to(spread({}));
+	// const meta = spread({
+	// 	$id: "meta",
+	// 	object: response.meta,
+	// });
+	// // meta.to(output);
 
-	const getNextPage = meta.to(
-		calculateNextPage({
-			$id: "nextPage",
-		})
-	);
-	const nextPage = templates.urlTemplate({
-		$id: "nextPageUrl",
-		template:
-			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
-		// per_page: getNextPage.per_page,
-		// page: getNextPage.page,
-		select: "id",
-		search: inputs.search,
-	});
-	getNextPage.page.to(nextPage);
-	getNextPage.per_page.to(nextPage);
-	nextPage.url.to(output);
+	// const getNextPage = meta.to(
+	// 	calculateNextPage({
+	// 		$id: "nextPage",
+	// 	})
+	// );
+	// const nextPage = templates.urlTemplate({
+	// 	$id: "nextPageUrl",
+	// 	template:
+	// 		"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
+	// 	// per_page: getNextPage.per_page,
+	// 	// page: getNextPage.page,
+	// 	select: "id",
+	// 	search: inputs.search,
+	// });
+	// getNextPage.page.to(nextPage);
+	// getNextPage.per_page.to(nextPage);
 	// nextPage.url.to(output);
-	nextPage.url.to(fetch);
+	// // nextPage.url.to(output);
+	// nextPage.url.to(fetch);
 
-	const accumulate = concat({ $id: "accumulate", list: [] });
-	// openAlexSearchUrl.to(accumulate);
+	// const accumulate = concat({ $id: "accumulate", list: [] });
+	// // openAlexSearchUrl.to(accumulate);
+
+	// return output;
+	// return base.output();
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// const done = base.output();
+	// const nextPage = nextPageNo({
+	// 	$id: "nextPage",
+	// 	page: 1,
+	// 	per_page: 10,
+	// 	count: 100,
+	// });
+
+	// nextPage.page.to(nextPage);
+	// nextPage.per_page.to(nextPage);
+	// nextPage.count.to(nextPage);
+
+	// nextPage.page.to(output);
+	// nextPage.count.to(output);
+	// nextPage.count.to(output);
+	// nextPage.done.to(done);
+	// done.done.to(output);
+	// inputs.search.to(nextPage);
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	const output = base.output();
+	const pages = pagesArray({
+		$id: "pages",
+		count: 100,
+		per_page: 10,
+		page: 3,
+	});
+	inputs.search.to(pages);
+	pages.page.to(output);
+
+	const invokeShift = shift({ $id: "shift" });
+	pages.pages.as("list").to(invokeShift);
+	invokeShift.list.to(invokeShift);
+	invokeShift.item.as("page").to(output);
 
 	return output;
-	// return base.output();
 });
 
 const serialized = await b.serialize();
