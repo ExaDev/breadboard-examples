@@ -48,7 +48,8 @@ const pickAndSpread = code<{ key: string; object: any }>(
 	}
 );
 
-const spread = code<{ object: any }>(({ object }) => {
+const spread = code<{ object: object }>((inputs) => {
+	const object = inputs.object;
 	if (typeof object !== "object") {
 		throw new Error(`object is of type ${typeof object} not object`);
 	}
@@ -81,15 +82,21 @@ const stringJoin = code<
 });
 
 const calculateNextPage = code<{
-	page: number;
-	per_page: number;
-	count: number;
+	page?: number;
+	per_page?: number;
+	count?: number;
 }>((inputs) => {
-	const { page, per_page, count } = inputs;
-	if (page * per_page < count) {
-		return { page: page + 1 };
+	// default page to 1
+	const page = inputs.page || 1;
+	const per_page = inputs.per_page || 1;
+	// if count is provided, return empty if this is the last page
+	if (inputs.count) {
+		const totalPages = Math.ceil(inputs.count / per_page);
+		if (page >= totalPages) {
+			return {};
+		}
 	}
-	return {};
+	return { page: page + 1, per_page, count: inputs.count };
 });
 
 const calculateTotalPages = code<{ count: number; per_page: number }>(
@@ -104,10 +111,10 @@ const b = board((inputs) => {
 		$id: "makeURL",
 		template:
 			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
-		per_page: 100,
-		page: 1,
+		// per_page: 1,
+		// page: inputs.page,
 		select: "id",
-		search: inputs.search,
+		// search: inputs.search,
 	});
 
 	const fetch = core.fetch({
@@ -117,25 +124,55 @@ const b = board((inputs) => {
 
 	const output = base.output();
 
-	// inputs.search.to(openAlexSearchUrl);
+	inputs.search.to(openAlexSearchUrl);
+	calculateNextPage({
+		$id: "firstPage",
+	}).to(openAlexSearchUrl);
 	openAlexSearchUrl.url.to(output);
 
 	openAlexSearchUrl.to(fetch);
-	fetch.response.to(output);
+	// fetch.response.to(output);
 
-	const response = fetch.response.as("object").to(spread());
-	response.to(output);
+	// const response = fetch.response.as("object").to(spread({}));
+	const response = spread({
+		$id: "response",
+		object: fetch.response,
+	});
+	// response.to(output);
+	response.meta.to(output);
 
-	const meta = response.meta.as("object").to(spread());
-	meta.to(output);
+	// const meta = response.meta.as("object").to(spread({}));
+	const meta = spread({
+		$id: "meta",
+		object: response.meta,
+	});
+	// meta.to(output);
 
-	const getNextPage = meta.to(calculateNextPage());
-	getNextPage.to(output);
+	const getNextPage = meta.to(
+		calculateNextPage({
+			$id: "nextPage",
+		})
+	);
+	const nextPage = templates.urlTemplate({
+		$id: "nextPageUrl",
+		template:
+			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
+		// per_page: getNextPage.per_page,
+		// page: getNextPage.page,
+		select: "id",
+		search: inputs.search,
+	});
+	getNextPage.page.to(nextPage);
+	getNextPage.per_page.to(nextPage);
+	nextPage.url.to(output);
+	// nextPage.url.to(output);
+	nextPage.url.to(fetch);
 
 	const accumulate = concat({ $id: "accumulate", list: [] });
 	// openAlexSearchUrl.to(accumulate);
 
 	return output;
+	// return base.output();
 });
 
 const serialized = await b.serialize();
