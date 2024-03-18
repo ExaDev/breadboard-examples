@@ -262,14 +262,13 @@ const b = board((inputs) => {
 
 	const fetchUrl = core.fetch({ $id: "fetch", method: "GET" });
 	urlTemplate.url.to(fetchUrl);
-	fetchUrl.response.to(
-		base.output({ $id: "A" }).to(output)
-	);
-	fetchUrl.response.to(
-		base.output({ $id: "B" })
-	).to(output);
 
-	fetchUrl.response.to(base.output({ $id: "response" })).to(output);
+	// base.output({ $id: "response", response: fetchUrl.response }).to(output);
+	const response = spread({ object: fetchUrl.response });
+	response.meta.to(base.output({ $id: "response" })).to(output);
+	const meta = spread({ object: response.meta });
+
+	// fetchUrl.response.to(base.output({ $id: "response" })).to(output);
 	// const response = base.output({
 	// 	$id: "response",
 	// 	meta: pickAndSpread({ key: "meta", object: fetchUrl.response }),
