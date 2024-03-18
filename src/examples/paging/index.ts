@@ -253,43 +253,44 @@ const b = board((inputs) => {
 			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
 		per_page: 10,
 		page: 1,
-		select: "id,display_name,title",
+		select: "id,display_name,title,relevance_score",
 		// search: inputs.search,
 	});
+
 	inputs.search.to(urlTemplate);
 	// inputs.search.to(urlTemplate);
-	const url = base.output({ $id: "url" });
-	urlTemplate.url.to(url);
-	url.url.to(output);
+	inputs.search.to(base.output({ $id: "url" })).to(output);
+	// urlTemplate.url.to(url).
+	// url.url.to(output);
 
 	const fetchUrl = core.fetch({ $id: "fetch", method: "GET" });
 	urlTemplate.url.to(fetchUrl);
 
 	// base.output({ $id: "response", response: fetchUrl.response }).to(output);
 	const response = spread({ $id: "spreadResponse", object: fetchUrl.response });
-	response.meta.to(base.output({ $id: "response" })).to(output);
+	response.meta.to(base.output({ $id: "response" })); //.to(output);
 
-	response.results.to(base.output({ $id: "results" })).to(output);
+	response.results.to(base.output({ $id: "results" })); //.to(output);
 
 	const meta = spread({ $id: "spreadMeta", object: response.meta });
-	meta.to(base.output({ $id: "meta" })).to(output);
+	meta.to(base.output({ $id: "meta" })); //.to(output);
 
 	const pages = pagesArray({
 		$id: "pages",
 	});
 	meta.count.to(pages);
 	meta.per_page.to(pages);
-	pages.to(base.output({ $id: "pagesOutput" })).to(output);
+	pages.to(base.output({ $id: "pagesOutput" })); //.to(output);
 
 	// shift and emit each result
 	const invokeShift = shift({ $id: "shift" });
 	response.results.as("list").to(invokeShift);
 	invokeShift.list.to(invokeShift);
-	// const item = base.output({ $id: "item" });
-	// invokeShift.item.to(item);
-	// item.to(output);
+
 	const result = spread({ $id: "spreadResult", object: invokeShift.item });
-	result.to(base.output({ $id: "result" })).to(output);
+	result.to(base.output({ $id: "result" })); //.to(output);
+
+	const shiftOutput = base.output({ $id: "shiftOutput" });
 
 	return output;
 });
@@ -301,6 +302,7 @@ fs.writeFileSync("serialized.json", JSON.stringify(serialized, null, 2));
 await merMake({
 	graph: b,
 	destination: import.meta.dirname,
+	ignoreSubgraphs: true,
 });
 fs.writeFileSync(
 	path.join(import.meta.dirname, "board.json"),
