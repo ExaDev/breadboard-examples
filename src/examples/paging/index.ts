@@ -253,7 +253,7 @@ const b = board((inputs) => {
 			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
 		per_page: 10,
 		page: 1,
-		select: "id",
+		select: "id,display_name,title",
 		// search: inputs.search,
 	});
 	inputs.search.to(urlTemplate);
@@ -285,9 +285,11 @@ const b = board((inputs) => {
 	const invokeShift = shift({ $id: "shift" });
 	response.results.as("list").to(invokeShift);
 	invokeShift.list.to(invokeShift);
-	const item = base.output({ $id: "item" });
-	invokeShift.item.to(item);
-	item.to(output);
+	// const item = base.output({ $id: "item" });
+	// invokeShift.item.to(item);
+	// item.to(output);
+	const result = spread({ $id: "spreadResult", object: invokeShift.item });
+	result.to(base.output({ $id: "result" })).to(output);
 
 	return output;
 });
