@@ -2,13 +2,16 @@
 
 import {
 	BoardRunner,
+	Probe,
+	ProbeMessage,
 	asRuntimeKit,
 	base,
 	board,
 	code,
 } from "@google-labs/breadboard";
+import { RunConfig, run } from "@google-labs/breadboard/harness";
 import Core from "@google-labs/core-kit";
-import TemplateKit from "@google-labs/template-kit";
+import TemplateKit, { templates } from "@google-labs/template-kit";
 import fs from "fs";
 import path from "path";
 import { merMake } from "../../util/merMake.ts";
@@ -221,19 +224,39 @@ const b = board((inputs) => {
 	// inputs.search.to(nextPage);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	const output = base.output();
-	const pages = pagesArray({
-		$id: "pages",
-		count: 100,
-		per_page: 10,
-		page: 3,
-	});
-	inputs.search.to(pages);
-	pages.page.to(output);
+	// const pages = pagesArray({
+	// 	$id: "pages",
+	// 	count: 100,
+	// 	per_page: 10,
+	// 	page: 3,
+	// });
+	// // inputs.search.to(pages);
+	// // pages.page.to(output);
+	// pages.to(base.output({ $id: "pages" }));
 
-	const invokeShift = shift({ $id: "shift" });
-	pages.pages.as("list").to(invokeShift);
-	invokeShift.list.to(invokeShift);
-	invokeShift.item.as("page").to(output);
+	// const invokeShift = shift({ $id: "shift" });
+	// pages.pages.as("list").to(invokeShift);
+
+	// invokeShift.list.to(invokeShift);
+
+	// const page = base.output();
+	// invokeShift.item.as("page").to(page);
+	// page.page.to(output);
+
+	const urlTemplate = templates.urlTemplate({
+		$id: "urlTemplate",
+		template:
+			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
+		per_page: 10,
+		page: 1,
+		select: "id",
+		// search: inputs.search,
+	});
+	inputs.search.to(urlTemplate);
+	// inputs.search.to(urlTemplate);
+	const url = base.output({ $id: "url" });
+	urlTemplate.url.to(url);
+	url.url.to(output);
 
 	return output;
 });
@@ -253,15 +276,77 @@ fs.writeFileSync(
 
 const runner: BoardRunner = await BoardRunner.fromGraphDescriptor(serialized);
 
+class ProbeClass implements Probe {
+	report?(message: ProbeMessage): Promise<void> {
+		console.log("=".repeat(80));
+		console.log(JSON.stringify(message, null, 2));
+		return Promise.resolve();
+	}
+	addEventListener(
+		type: string,
+		callback: EventListenerOrEventListenerObject | null,
+		options?: boolean | AddEventListenerOptions | undefined
+	): void {
+		// throw new Error("Method not implemented.");
+	}
+	dispatchEvent(event: Event): boolean {
+		// throw new Error("Method not implemented.");
+		return true;
+	}
+	removeEventListener(
+		type: string,
+		callback: EventListenerOrEventListenerObject | null,
+		options?: boolean | EventListenerOptions | undefined
+	): void {
+		// throw new Error("Method not implemented.");
+	}
+}
+
+const kits = [asRuntimeKit(Core), asRuntimeKit(TemplateKit)];
+const inputs = { search: "Artificial Intelligence" };
+// const runner = await BoardRunner.fromGraphDescriptor(myBoard);
+
+for await (const runResult of run({
+	url: ".",
+	kits,
+	remote: undefined,
+	proxy: undefined,
+	diagnostics: false,
+	runner: runner,
+} satisfies RunConfig)) {
+	console.log("=".repeat(80));
+	console.debug({ type: runResult.type });
+	if (runResult.type == "input") {
+		console.log("input");
+		console.log(runResult);
+		console.log(inputs);
+		// runResult.inputs = { list: ["a", "b", "c"] };
+		runResult.reply({
+			inputs,
+		});
+		console.log();
+	} else if (runResult.type == "output") {
+		console.log("output");
+		console.log(runResult);
+		console.log();
+		//
+	} else {
+		console.debug("else");
+		console.debug(runResult);
+		console.debug();
+	}
+}
+console.log("\n", "+".repeat(80), "\n");
 for await (const runResult of runner.run({
-	kits: [asRuntimeKit(Core), asRuntimeKit(TemplateKit)],
+	probe: new ProbeClass(),
+	kits,
 })) {
 	console.log("=".repeat(80));
 	console.log({ type: runResult.type });
 
 	if (runResult.type == "input") {
-		const inputs = { search: "Artificial Intelligence" };
 		console.log({ inputs });
+		// runResult.inputs = { list: ["a", "b", "c"] };
 		runResult.inputs = inputs;
 		console.log();
 	} else if (runResult.type == "output") {
