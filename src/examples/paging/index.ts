@@ -223,7 +223,9 @@ const b = board((inputs) => {
 	// done.done.to(output);
 	// inputs.search.to(nextPage);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	const output = base.output();
+	const output = base.output({
+		$id: "output",
+	});
 	// const pages = pagesArray({
 	// 	$id: "pages",
 	// 	count: 100,
@@ -260,9 +262,27 @@ const b = board((inputs) => {
 
 	const fetchUrl = core.fetch({ $id: "fetch", method: "GET" });
 	urlTemplate.url.to(fetchUrl);
-	const response = base.output({ $id: "response" });
-	fetchUrl.response.to(response);
-	response.to(output);
+	fetchUrl.response.to(
+		base.output({ $id: "A" }).to(output)
+	);
+	fetchUrl.response.to(
+		base.output({ $id: "B" })
+	).to(output);
+
+	fetchUrl.response.to(base.output({ $id: "response" })).to(output);
+	// const response = base.output({
+	// 	$id: "response",
+	// 	meta: pickAndSpread({ key: "meta", object: fetchUrl.response }),
+	// });
+	// fetchUrl.response.to(spread({ object: response }));
+	// const meta = spread({ $id: "meta", object: response.meta });
+	// meta.meta.to(base.output({ $id: "meta" }).to(output));
+	// const results = spread({ $id: "results", object: response.results });
+	// results.results.to(base.output({ $id: "results" }).to(output));
+
+	// response.meta.to(base.output().to(output));
+	// response.results.to(base.output().to(output));
+	// response.to(output);
 
 	return output;
 });
