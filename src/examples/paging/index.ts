@@ -126,7 +126,9 @@ const pagesArray = code<{
 	count: number;
 	per_page: number;
 	page?: number;
-}>(({ count, per_page, page = 1 }) => {
+	// }>(({ count, per_page, page = 1 }) => {
+}>((inputs) => {
+	const { count, per_page, page = 1 } = inputs;
 	const pages = Math.ceil(count / per_page);
 	const start = page;
 	const end = pages;
@@ -224,7 +226,7 @@ const b = board((inputs) => {
 	// inputs.search.to(nextPage);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	const output = base.output({
-		$id: "output",
+		$id: "main",
 	});
 	// const pages = pagesArray({
 	// 	$id: "pages",
@@ -264,24 +266,28 @@ const b = board((inputs) => {
 	urlTemplate.url.to(fetchUrl);
 
 	// base.output({ $id: "response", response: fetchUrl.response }).to(output);
-	const response = spread({ object: fetchUrl.response });
+	const response = spread({ $id: "spreadResponse", object: fetchUrl.response });
 	response.meta.to(base.output({ $id: "response" })).to(output);
-	const meta = spread({ object: response.meta });
 
-	// fetchUrl.response.to(base.output({ $id: "response" })).to(output);
-	// const response = base.output({
-	// 	$id: "response",
-	// 	meta: pickAndSpread({ key: "meta", object: fetchUrl.response }),
-	// });
-	// fetchUrl.response.to(spread({ object: response }));
-	// const meta = spread({ $id: "meta", object: response.meta });
-	// meta.meta.to(base.output({ $id: "meta" }).to(output));
-	// const results = spread({ $id: "results", object: response.results });
-	// results.results.to(base.output({ $id: "results" }).to(output));
+	response.results.to(base.output({ $id: "results" })).to(output);
 
-	// response.meta.to(base.output().to(output));
-	// response.results.to(base.output().to(output));
-	// response.to(output);
+	const meta = spread({ $id: "spreadMeta", object: response.meta });
+	meta.to(base.output({ $id: "meta" })).to(output);
+
+	const pages = pagesArray({
+		$id: "pages",
+	});
+	meta.count.to(pages);
+	meta.per_page.to(pages);
+	pages.to(base.output({ $id: "pagesOutput" })).to(output);
+
+	// shift and emit each result
+	const invokeShift = shift({ $id: "shift" });
+	response.results.as("list").to(invokeShift);
+	invokeShift.list.to(invokeShift);
+	const item = base.output({ $id: "item" });
+	invokeShift.item.to(item);
+	item.to(output);
 
 	return output;
 });
