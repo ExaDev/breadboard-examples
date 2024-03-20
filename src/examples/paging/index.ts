@@ -329,7 +329,15 @@ const b = board((inputs) => {
 
 	const result = spread({ $id: "spreadResult", object: shiftResult.item });
 	const singleResultOutput = base.output({ $id: "singleResultOutput" });
+	result.id.to(singleResultOutput);
 	result.to(singleResultOutput);
+	// meta.page.to(singleResultOutput);
+	// urlTemplate.url.to(singleResultOutput);
+	// result.to(singleResultOutput);
+	// singleResultOutput.id.to(output);
+	// singleResultOutput.to(output);
+	// meta.to(output);
+	// inputs.to(output);
 	// meta.page.to(singleResultOutput);
 	// result.id.to(singleResultOutput); //.to(output);
 	// result.display_name.to(singleResultOutput); //.to(output);
@@ -357,6 +365,7 @@ const b = board((inputs) => {
 	// nextPage.page.to(urlTemplate);
 	// nextPage.per_page.to(urlTemplate);
 	nextPage.to(urlTemplate);
+
 	// inputs.per_page.to(urlTemplate);
 	// inputs.search.to(urlTemplate);
 	// nextPage.per_page.to(urlTemplate);
