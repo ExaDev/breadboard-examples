@@ -2,6 +2,7 @@
 
 import {
 	BoardRunner,
+	InputValues,
 	Probe,
 	ProbeMessage,
 	asRuntimeKit,
@@ -26,7 +27,7 @@ const pop = code((inputs) => {
 	return {};
 });
 
-const shift = code((inputs) => {
+const shift = code<{ list: InputValues[] }>((inputs) => {
 	if (inputs.list && Array.isArray(inputs.list) && inputs.list.length > 0) {
 		const list = inputs.list;
 		const item = list.shift();
@@ -104,7 +105,7 @@ const nextPageNo = code<{
 	const finalPage = Math.ceil(count / per_page);
 	const nextPage = page + 1;
 	if (nextPage > finalPage) {
-		return { done: true };
+		return {};
 	}
 	return { page: nextPage, per_page, count: inputs.count };
 });
@@ -115,6 +116,11 @@ const calculateTotalPages = code<{ count: number; per_page: number }>(
 		return { totalPages: Math.ceil(count / per_page) };
 	}
 );
+
+const increment = code<{ value: number }>((inputs) => {
+	const { value } = inputs;
+	return { value: value + 1 };
+});
 
 // const pagesArray = code<{ count: number; per_page: number }>((inputs) => {
 // 	const { count, per_page } = inputs;
@@ -225,9 +231,7 @@ const b = board((inputs) => {
 	// done.done.to(output);
 	// inputs.search.to(nextPage);
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-	const output = base.output({
-		$id: "main",
-	});
+	const output = base.output({ $id: "main" });
 	// const pages = pagesArray({
 	// 	$id: "pages",
 	// 	count: 100,
@@ -251,15 +255,47 @@ const b = board((inputs) => {
 		$id: "urlTemplate",
 		template:
 			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
-		per_page: 10,
+		// per_page: inputs.per_page || 10,
 		page: 1,
 		select: "id,display_name,title,relevance_score",
 		// search: inputs.search,
 	});
+	inputs.to(urlTemplate);
 
-	inputs.search.to(urlTemplate);
+	// const inputsPassThrough = base.output({
+	// $id: "inputsPassThrough",
+	// schema: {
+	// 	type: "object",
+	// 	properties: {
+	// 		search: { type: "string" },
+	// 		per_page: { type: "number" },
+	// 		page: { type: "number" },
+	// 	},
+	// },
+	// });
+	// inputs.to(inputsPassThrough);
+	// inputs.page.to(inputsPassThrough);
+	// inputs.per_page.to(inputsPassThrough);
+	// inputs.search.to(inputsPassThrough);
+	// inputsPassThrough.to(output);
+	// inputsPassThrough.to(urlTemplate);
+	// inputsPassThrough.search.to(urlTemplate);
+	// inputsPassThrough.per_page.to(urlTemplate);
+	urlTemplate.to(output);
+	// inputsPassThrough.search.to(urlTemplate);
+	// inputsPassThrough.per_page.to(urlTemplate);
+	// inputsPassThrough.page.to(urlTemplate);
+
 	// inputs.search.to(urlTemplate);
-	inputs.search.to(base.output({ $id: "url" })).to(output);
+	// inputs.per_page.to(urlTemplate);
+	// inputs.page.to(urlTemplate);
+
+	// inputs.to(urlTemplate);
+	// const urlOutput = base.output({ $id: "urlOutput" });
+
+	urlTemplate.url.to(output);
+	// inputs.search.to(urlTemplate);
+	// inputs.search.to(urlOutput).to(output);
 	// urlTemplate.url.to(url).
 	// url.url.to(output);
 
@@ -268,35 +304,81 @@ const b = board((inputs) => {
 
 	// base.output({ $id: "response", response: fetchUrl.response }).to(output);
 	const response = spread({ $id: "spreadResponse", object: fetchUrl.response });
-	response.meta.to(base.output({ $id: "response" })); //.to(output);
+	const responseOutput = base.output({ $id: "responseOutput" });
+	response.meta.to(responseOutput); //.to(output);
 
-	response.results.to(base.output({ $id: "results" })); //.to(output);
+	const resultsOutput = base.output({ $id: "resultsOutput" });
+	response.results.to(resultsOutput); //.to(output);
 
 	const meta = spread({ $id: "spreadMeta", object: response.meta });
-	meta.to(base.output({ $id: "meta" })); //.to(output);
+	const metaOutput = base.output({ $id: "metaOutput" });
+	meta.to(metaOutput); //.to(output);
 
-	const pages = pagesArray({
-		$id: "pages",
-	});
-	meta.count.to(pages);
-	meta.per_page.to(pages);
-	pages.to(base.output({ $id: "pagesOutput" })); //.to(output);
+	// const pages = pagesArray({
+	// 	$id: "pages",
+	// });
+	// meta.count.to(pages);
+	// meta.per_page.to(pages);
+	// const pagesOutput = base.output({ $id: "pagesOutput" });
+	// pages.to(pagesOutput); //.to(output);
 
 	// shift and emit each result
-	const invokeShift = shift({ $id: "shift" });
-	response.results.as("list").to(invokeShift);
-	invokeShift.list.to(invokeShift);
+	const shiftResult = shift({ $id: "shiftResult" });
+	response.results.as("list").to(shiftResult);
+	shiftResult.list.to(shiftResult);
 
-	const result = spread({ $id: "spreadResult", object: invokeShift.item });
-	result.to(base.output({ $id: "result" })); //.to(output);
+	const result = spread({ $id: "spreadResult", object: shiftResult.item });
+	const singleResultOutput = base.output({ $id: "singleResultOutput" });
+	result.to(singleResultOutput);
+	// meta.page.to(singleResultOutput);
+	// result.id.to(singleResultOutput); //.to(output);
+	// result.display_name.to(singleResultOutput); //.to(output);
+	// result.title.to(singleResultOutput); //.to(output);
+	// result.relevance_score.to(singleResultOutput); //.to(output);
 
-	const shiftOutput = base.output({ $id: "shiftOutput" });
+	// const shiftPage = shift({ $id: "shiftPage" });
+	// pages.pages.as("list").to(shiftPage);
+	// const page = shiftPage.item.as("page");
+	// shiftPage.list.to(shiftPage);
+	// const nextPageOutput = base.output({ $id: "page" });
+	// page.to(nextPageOutput);
+	// page.to(urlTemplate);
+
+	const nextPage = nextPageNo({ $id: "nextPage" });
+	meta.count.to(nextPage);
+	meta.per_page.to(nextPage);
+	meta.page.to(nextPage);
+	//
+	const nextPageOutput = base.output({ $id: "nextPageOutput" });
+	nextPage.page.to(nextPageOutput);
+	// nextPage.count.to(nextPageOutput);
+	// nextPage.per_page.to(nextPageOutput);
+
+	// nextPage.page.to(urlTemplate);
+	// nextPage.per_page.to(urlTemplate);
+	nextPage.to(urlTemplate);
+	// inputs.per_page.to(urlTemplate);
+	// inputs.search.to(urlTemplate);
+	// nextPage.per_page.to(urlTemplate);
+	// nextPage.count.to(urlTemplate);
+
+	// shiftPage.item.as("page").to(base.output({ $id: "page" }));
+	// shiftPage.list.to(shiftPage);
 
 	return output;
+	// return {
+	// url: urlOutput,
+	// response: responseOutput,
+	// results: resultsOutput,
+	// meta: metaOutput,
+	// pages: pagesOutput,
+	// singleResult: singleResultOutput,
+	// page: nextPageOutput,
+	// };
 });
 
 const serialized = await b.serialize();
-console.log(JSON.stringify(serialized, null, 2));
+// console.log(JSON.stringify(serialized, null, 2));
 fs.writeFileSync("serialized.json", JSON.stringify(serialized, null, 2));
 
 await merMake({
@@ -313,8 +395,10 @@ const runner: BoardRunner = await BoardRunner.fromGraphDescriptor(serialized);
 
 class ProbeClass implements Probe {
 	report?(message: ProbeMessage): Promise<void> {
-		console.log("=".repeat(80));
+		console.log("-".repeat(20), "probe message start" + "-".repeat(20));
 		console.log(JSON.stringify(message, null, 2));
+		// console.log(message);
+		console.log("-".repeat(20), "probe message end" + "-".repeat(20));
 		return Promise.resolve();
 	}
 	addEventListener(
@@ -339,58 +423,72 @@ class ProbeClass implements Probe {
 
 const kits = [asRuntimeKit(Core), asRuntimeKit(TemplateKit)];
 const inputs = { search: "Artificial Intelligence" };
+// const inputs = { page: 1, per_page: 2, search: `"Artificial Intelligence"` };
 // const runner = await BoardRunner.fromGraphDescriptor(myBoard);
 
-for await (const runResult of run({
-	url: ".",
-	kits,
-	remote: undefined,
-	proxy: undefined,
-	diagnostics: false,
-	runner: runner,
-} satisfies RunConfig)) {
-	console.log("=".repeat(80));
-	console.debug({ type: runResult.type });
-	if (runResult.type == "input") {
-		console.log("input");
-		console.log(runResult);
-		console.log(inputs);
-		// runResult.inputs = { list: ["a", "b", "c"] };
-		runResult.reply({
-			inputs,
-		});
-		console.log();
-	} else if (runResult.type == "output") {
-		console.log("output");
-		console.log(runResult);
-		console.log();
-		//
-	} else {
-		console.debug("else");
-		console.debug(runResult);
-		console.debug();
+async function runHarness() {
+	for await (const runResult of run({
+		url: ".",
+		kits,
+		remote: undefined,
+		proxy: undefined,
+		diagnostics: false,
+		runner: runner,
+	} satisfies RunConfig)) {
+		console.log("=".repeat(80));
+		console.debug({ type: runResult.type });
+		if (runResult.type == "input") {
+			console.log("input");
+			console.log(runResult);
+			console.log(inputs);
+			// runResult.inputs = { list: ["a", "b", "c"] };
+			runResult.reply({
+				inputs,
+			});
+			console.log();
+		} else if (runResult.type == "output") {
+			console.log("output");
+			console.log(runResult);
+			console.log();
+			//
+		} else {
+			console.debug("else");
+			console.debug(runResult);
+			console.debug();
+		}
 	}
 }
-console.log("\n", "+".repeat(80), "\n");
-for await (const runResult of runner.run({
-	// probe: new ProbeClass(),
-	kits,
-})) {
-	console.log("=".repeat(80));
-	console.log({ type: runResult.type });
+// await runHarness();
 
-	if (runResult.type == "input") {
-		console.log({ inputs });
-		// runResult.inputs = { list: ["a", "b", "c"] };
-		runResult.inputs = inputs;
+console.log("\n", "+".repeat(80), "\n");
+async function runWithRunner() {
+	for await (const runResult of runner.run({
+		// probe: new ProbeClass(),
+		kits,
+	})) {
 		console.log();
-	} else if (runResult.type == "output") {
-		console.log({
-			output: runResult.outputs,
-		});
+		console.log("=".repeat(80));
+		console.log("=".repeat(80));
+		console.log("=".repeat(80));
 		console.log();
-	} else {
 		console.log({ type: runResult.type });
-		console.log();
+
+		if (runResult.type == "input") {
+			console.log({ inputs });
+			// runResult.inputs = { list: ["a", "b", "c"] };
+			runResult.inputs = inputs;
+			console.log();
+		} else if (runResult.type == "output") {
+			console.log({
+				id: runResult.node.id,
+				output: runResult.outputs,
+			});
+			console.log();
+		} else if (runResult.type == "graphend") {
+		} else {
+			console.log({ type: runResult.type });
+			console.log();
+		}
 	}
 }
+await runWithRunner();
