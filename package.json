@@ -2,6 +2,7 @@
 	"dependencies": {
 		"@google-labs/breadboard": "0.11.2",
 		"@google-labs/core-kit": "0.4.0",
+		"@google-labs/template-kit": "^0.2.0",
 		"@xenova/transformers": "^2.16.0"
 	},
 	"devDependencies": {
@@ -21,7 +22,9 @@
 		"one-input-multiple-outputs": "tsx src/examples/one-input-multiple-outputs/index.ts",
 		"running-serialized-board-with-code-node": "tsx src/examples/running-serialized-board-with-code-node/index.ts",
 		"wiring-nodes": "tsx src/examples/wiring-nodes/index.ts",
-		"looping": "node --loader ts-node/esm --inspect ./src/examples/looping/index.ts"
+		"looping": "node --loader ts-node/esm --inspect ./src/examples/looping/index.ts",
+		"paging": "node --loader ts-node/esm --inspect ./src/examples/paging/index.ts"
 	},
-	"type": "module"
+	"type": "module",
+	"packageManager": "yarn@4.1.1"
 }
