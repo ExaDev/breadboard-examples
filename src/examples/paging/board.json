@@ -127,7 +127,29 @@
     {
       "id": "input-1",
       "type": "input",
-      "configuration": {}
+			"configuration": {
+				"schema": {
+					"type": "object",
+					"properties": {
+						"search": {
+							"type": "string",
+							"title": "search",
+							"description": "The search term to use in the query"
+						},
+						"per_page": {
+							"type": "integer",
+							"title": "per_page",
+							"description": "The number of results to return per page"
+						},
+						"page": {
+							"type": "integer",
+							"title": "page",
+							"description": "The page number to return",
+							"default": 1
+						}
+					}
+				}
+			}
     },
     {
       "id": "urlOutput",
