@@ -267,6 +267,7 @@ const b = board((inputs) => {
 		// search: inputs.search,
 	});
 	inputs.to(urlTemplate);
+	base.output({ $id: "urlOutput", url: urlTemplate.url });
 	// inputs.to(urlTemplate);
 	// inputs.search.to(urlTemplate);
 	// inputs.page.to(urlTemplate);
@@ -314,15 +315,18 @@ const b = board((inputs) => {
 
 	// base.output({ $id: "response", response: fetchUrl.response }).to(output);
 	const response = spread({ $id: "spreadResponse", object: fetchUrl.response });
-	const responseOutput = base.output({ $id: "responseOutput" });
-	response.meta.to(responseOutput); //.to(output);
+	// const responseOutput = base.output({ $id: "responseOutput" });
+	// response.meta.to(responseOutput); //.to(output);
+	base.output({ $id: "responseOutput", response });
 
-	const resultsOutput = base.output({ $id: "resultsOutput" });
-	response.results.to(resultsOutput); //.to(output);
+	// const resultsOutput = base.output({ $id: "resultsOutput" });
+	// response.results.to(resultsOutput); //.to(output);
+	base.output({ $id: "resultsOutput", results: response.results });
 
 	const meta = spread({ $id: "spreadMeta", object: response.meta });
-	const metaOutput = base.output({ $id: "metaOutput" });
-	meta.to(metaOutput); //.to(output);
+	// const metaOutput = base.output({ $id: "metaOutput",meta });
+	base.output({ $id: "metaOutput", meta });
+	// meta.to(metaOutput); //.to(output);
 
 	// const pages = pagesArray({
 	// 	$id: "pages",
@@ -342,7 +346,7 @@ const b = board((inputs) => {
 	// result.id.to(singleResultOutput);
 	result.to(output);
 	// urlTemplate.url.as("searchUrl").to(output);
-	urlTemplate.to(output);
+	// urlTemplate.to(output);
 	// meta.to(output);
 	// meta.page.to(output);
 	// meta.per_page.to(output);
@@ -374,11 +378,12 @@ const b = board((inputs) => {
 	// meta.page.to(nextPage);
 	meta.to(nextPage);
 	//
-	const nextPageOutput = base.output({ $id: "nextPageOutput" });
+	// const nextPageOutput = base.output({ $id: "nextPageOutput" });
 	// nextPage.page.to(nextPageOutput);
 	// nextPage.count.to(nextPageOutput);
 	// nextPage.per_page.to(nextPageOutput);
-	nextPage.to(nextPageOutput);
+	// nextPage.to(nextPageOutput);
+	base.output({ $id: "nextPageOutput", nextPage });
 
 	// nextPage.page.to(urlTemplate);
 	// nextPage.per_page.to(urlTemplate);
@@ -452,7 +457,7 @@ class ProbeClass implements Probe {
 const kits = [asRuntimeKit(Core), asRuntimeKit(TemplateKit)];
 // const inputs = { search: "Artificial Intelligence" };
 // const inputs = { search: "Artificial Intelligence", per_page: 10 };
-const inputs = { per_page: 10, search: `"Artificial Intelligence"` };
+const inputs = { search: `"Artificial Intelligence"` };
 // const runner = await BoardRunner.fromGraphDescriptor(myBoard);
 
 async function runHarness() {
