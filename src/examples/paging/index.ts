@@ -91,6 +91,8 @@ const b = board((inputs) => {
 	// inputs.to(urlTemplate);
 
 	const input = base.input({
+		$id: "query",
+		title: "Search OpenAlex",
 		schema: inputSchema,
 	});
 	input.to(urlTemplate);

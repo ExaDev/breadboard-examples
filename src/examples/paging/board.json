@@ -64,7 +64,7 @@
 			"in": ""
 		},
 		{
-			"from": "input-3",
+			"from": "query",
 			"to": "urlTemplate",
 			"out": "*",
 			"in": ""
@@ -129,9 +129,10 @@
 			}
 		},
 		{
-			"id": "input-3",
+			"id": "query",
 			"type": "input",
 			"configuration": {
+				"title": "Search OpenAlex",
 				"schema": {
 					"required": [
 						"search"
