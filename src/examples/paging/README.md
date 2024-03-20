@@ -12,7 +12,7 @@ spreadMeta["invoke <br> id='spreadMeta'"] -- all --> nextPage["invoke <br> id='n
 urlTemplate["urlTemplate <br> id='urlTemplate'"] -- "url->url" --> urlOutput{{"output <br> id='urlOutput'"}}:::output
 urlTemplate["urlTemplate <br> id='urlTemplate'"] -- "url->url" --> fetch["fetch <br> id='fetch'"]
 nextPage["invoke <br> id='nextPage'"] -- all --> urlTemplate["urlTemplate <br> id='urlTemplate'"]
-input1[/"input <br> id='input-1'"/]:::input -- all --> urlTemplate["urlTemplate <br> id='urlTemplate'"]
+input3[/"input <br> id='input-3'"/]:::input -- all --> urlTemplate["urlTemplate <br> id='urlTemplate'"]
 classDef default stroke:#ffab40,fill:#fff2ccff,color:#000
 classDef input stroke:#3c78d8,fill:#c9daf8ff,color:#000
 classDef output stroke:#38761d,fill:#b6d7a8ff,color:#000
@@ -88,7 +88,7 @@ classDef slotted stroke:#a64d79
 			"in": ""
 		},
 		{
-			"from": "input-1",
+			"from": "input-3",
 			"to": "urlTemplate",
 			"out": "*",
 			"in": ""
@@ -152,9 +152,28 @@ classDef slotted stroke:#a64d79
 			}
 		},
 		{
-			"id": "input-1",
+			"id": "input-3",
 			"type": "input",
-			"configuration": {}
+			"configuration": {
+				"schema": {
+					"required": [
+						"search"
+					],
+					"properties": {
+						"search": {
+							"type": "string"
+						},
+						"page": {
+							"type": "number",
+							"default": "1"
+						},
+						"per_page": {
+							"type": "number",
+							"default": "200"
+						}
+					}
+				}
+			}
 		},
 		{
 			"id": "urlOutput",

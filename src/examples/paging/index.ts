@@ -5,6 +5,7 @@ import {
 	InputValues,
 	Probe,
 	ProbeMessage,
+	Schema,
 	asRuntimeKit,
 	base,
 	board,
@@ -51,7 +52,14 @@ const progress = code<{ current: number; total: number }>((inputs) => {
 	const { current, total } = inputs;
 	return { progress: current / total, current, total };
 });
-
+const inputSchema: Schema = {
+	required: ["search"],
+	properties: {
+		search: { type: "string" },
+		page: { type: "number", default: "1" },
+		per_page: { type: "number", default: "200" },
+	},
+};
 const debug = false;
 const b = board((inputs) => {
 	const output = base.output({ $id: "main" });
@@ -65,20 +73,14 @@ const b = board((inputs) => {
 		page: 1,
 		select: "id,display_name,title,relevance_score",
 	});
-	inputs.to(urlTemplate);
-	base.output({ $id: "urlOutput", url: urlTemplate.url });
+	// inputs.to(urlTemplate);
+
 	const input = base.input({
-		$id: "urlInput",
-		schema: {
-			required: ["search"],
-			properties: {
-				search: { type: "string" },
-				page: { type: "number", default: "1" },
-				per_page: { type: "number", default: "200" },
-			},
-		},
+		schema: inputSchema,
 	});
-	// input.to(urlTemplate);
+	input.to(urlTemplate);
+
+	base.output({ $id: "urlOutput", url: urlTemplate.url });
 
 	const fetchUrl = core.fetch({ $id: "fetch", method: "GET" });
 	urlTemplate.url.to(fetchUrl);

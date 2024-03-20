@@ -61,7 +61,7 @@
 			"in": ""
 		},
 		{
-			"from": "input-1",
+			"from": "input-3",
 			"to": "urlTemplate",
 			"out": "*",
 			"in": ""
@@ -125,7 +125,7 @@
 			}
 		},
 		{
-			"id": "input-1",
+			"id": "input-3",
 			"type": "input",
 			"configuration": {
 				"schema": {
