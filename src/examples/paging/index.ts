@@ -60,6 +60,7 @@ const inputSchema: Schema = {
 		per_page: { type: "number", default: "200" },
 	},
 };
+
 const debug = false;
 const b = board((inputs) => {
 	const output = base.output({ $id: "main" });
@@ -112,9 +113,15 @@ const b = board((inputs) => {
 	return output;
 });
 
-const serialized = await b.serialize();
-serialized.$schema =
+const boardSchema =
 	"https://raw.githubusercontent.com/breadboard-ai/breadboard/main/packages/schema/breadboard.schema.json";
+const serialized = await b.serialize({
+	// $schema: boardSchema,
+	title: "OpenAlex Search",
+	description: ["Search OpenAlex for works"].join("\n"),
+	url: "https://github.com/ExaDev-io/breadboard-examples/tree/looping-example/src/examples/paging",
+});
+serialized.$schema = boardSchema;
 fs.writeFileSync("serialized.json", JSON.stringify(serialized, null, "\t"));
 
 await merMake({

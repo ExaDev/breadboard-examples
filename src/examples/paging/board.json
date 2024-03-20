@@ -1,4 +1,7 @@
 {
+	"title": "OpenAlex Search",
+	"description": "Search OpenAlex for works",
+	"url": "https://github.com/ExaDev-io/breadboard-examples/tree/looping-example/src/examples/paging",
 	"edges": [
 		{
 			"from": "spreadResult",
