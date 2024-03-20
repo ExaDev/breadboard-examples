@@ -341,7 +341,8 @@ const b = board((inputs) => {
 	// const singleResultOutput = base.output({ $id: "singleResultOutput" });
 	// result.id.to(singleResultOutput);
 	result.to(output);
-	urlTemplate.url.as("searchUrl").to(output);
+	// urlTemplate.url.as("searchUrl").to(output);
+	urlTemplate.to(output);
 	// meta.to(output);
 	// meta.page.to(output);
 	// meta.per_page.to(output);
