@@ -17,15 +17,6 @@ import fs from "fs";
 import path from "path";
 import { merMake } from "../../util/merMake.ts";
 
-const pop = code((inputs) => {
-	if (inputs.list && Array.isArray(inputs.list) && inputs.list.length > 0) {
-		const list = inputs.list;
-		const item = list.pop();
-		return { item, list };
-	}
-	return {};
-});
-
 const shift = code<{ list: InputValues[] }>((inputs) => {
 	if (inputs.list && Array.isArray(inputs.list) && inputs.list.length > 0) {
 		const list = inputs.list;
@@ -35,53 +26,12 @@ const shift = code<{ list: InputValues[] }>((inputs) => {
 	return {};
 });
 
-const concat = code<{ list: unknown[]; concat: unknown[] }>((inputs) => {
-	if (Array.isArray(inputs.list) && Array.isArray(inputs.concat)) {
-		return {
-			list: inputs.list.concat(inputs.concat),
-		};
-	} else {
-		throw new Error("inputs are not arrays");
-	}
-});
-
-const pickAndSpread = code<{ key: string; object: any }>(
-	({ key = "key", object }) => {
-		if (typeof object !== "object") {
-			throw new Error(`object is of type ${typeof object} not object`);
-		}
-		if (!(key in object)) {
-			throw new Error(
-				`key ${key} not in object, keys are ${Object.keys(object)}`
-			);
-		}
-		const value = object[key];
-		return { ...value };
-	}
-);
-
 const spread = code<{ object: object }>((inputs) => {
 	const object = inputs.object;
 	if (typeof object !== "object") {
 		throw new Error(`object is of type ${typeof object} not object`);
 	}
 	return { ...object };
-});
-
-const pages = code<{ count: number; per_page: number }>((inputs) => {
-	const { count, per_page } = inputs;
-	const pages = Math.ceil(count / per_page);
-	return { pages };
-});
-
-const stringJoin = code<
-	{ left: string; right: string; separator: string },
-	{ result: string }
->((inputs) => {
-	const { left, right, separator = "" } = inputs;
-	return {
-		result: [left, right].join(separator),
-	};
 });
 
 const nextPageNo = code<{
@@ -95,32 +45,6 @@ const nextPageNo = code<{
 		return {};
 	}
 	return { page: nextPage, per_page, count };
-});
-
-const calculateTotalPages = code<{ count: number; per_page: number }>(
-	(inputs) => {
-		const { count, per_page } = inputs;
-		return { totalPages: Math.ceil(count / per_page) };
-	}
-);
-
-const increment = code<{ value: number }>((inputs) => {
-	const { value } = inputs;
-	return { value: value + 1 };
-});
-
-const pagesArray = code<{
-	count: number;
-	per_page: number;
-	page?: number;
-}>((inputs) => {
-	const { count, per_page, page = 1 } = inputs;
-	const pages = Math.ceil(count / per_page);
-	const start = page;
-	const end = pages;
-	return {
-		pages: Array.from({ length: end - start + 1 }, (_, i) => i + start),
-	};
 });
 
 const progress = code<{ current: number; total: number }>((inputs) => {
@@ -254,11 +178,7 @@ async function runWithRunner() {
 		// probe: new ProbeClass(),
 		kits,
 	})) {
-		console.log();
 		console.log("=".repeat(80));
-		console.log("=".repeat(80));
-		console.log("=".repeat(80));
-		console.log();
 		console.log({ type: runResult.type });
 
 		if (runResult.type == "input") {
