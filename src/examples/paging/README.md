@@ -349,6 +349,7 @@ classDef slotted stroke:#a64d79
 				}
 			]
 		}
-	}
+	},
+	"$schema": "https://raw.githubusercontent.com/breadboard-ai/breadboard/main/packages/schema/breadboard.schema.json"
 }
 ```

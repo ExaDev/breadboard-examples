@@ -99,6 +99,8 @@ const b = board((inputs) => {
 });
 
 const serialized = await b.serialize();
+serialized.$schema =
+	"https://raw.githubusercontent.com/breadboard-ai/breadboard/main/packages/schema/breadboard.schema.json";
 fs.writeFileSync("serialized.json", JSON.stringify(serialized, null, 2));
 
 await merMake({
@@ -108,7 +110,7 @@ await merMake({
 });
 fs.writeFileSync(
 	path.join(import.meta.dirname, "board.json"),
-	JSON.stringify(serialized, null, 2)
+	JSON.stringify(serialized, null, )
 );
 
 const runner: BoardRunner = await BoardRunner.fromGraphDescriptor(serialized);
