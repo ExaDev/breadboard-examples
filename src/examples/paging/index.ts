@@ -60,6 +60,7 @@ const inputSchema: Schema = {
 		per_page: { type: "integer", default: "200" },
 		entity: {
 			type: "string",
+			default: "works",
 			enum: [
 				"works",
 				"authors",
@@ -83,8 +84,8 @@ const b = board((inputs) => {
 		$id: "urlTemplate",
 		template:
 			"https://api.openalex.org/{entity}?search={search}&page={page}&per_page={per_page}&select={select}",
-		entity: "works",
 		page: 1,
+		entity: "works",
 		select: "id,display_name,title,relevance_score",
 	});
 	// inputs.to(urlTemplate);

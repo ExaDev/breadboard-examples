@@ -140,8 +140,8 @@ classDef slotted stroke:#a64d79
 			"type": "urlTemplate",
 			"configuration": {
 				"template": "https://api.openalex.org/{entity}?search={search}&page={page}&per_page={per_page}&select={select}",
-				"entity": "works",
 				"page": 1,
+				"entity": "works",
 				"select": "id,display_name,title,relevance_score"
 			}
 		},
@@ -174,6 +174,7 @@ classDef slotted stroke:#a64d79
 						},
 						"entity": {
 							"type": "string",
+							"default": "works",
 							"enum": [
 								"works",
 								"authors",
