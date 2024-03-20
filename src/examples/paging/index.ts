@@ -281,7 +281,7 @@ const b = board((inputs) => {
 	// inputsPassThrough.to(urlTemplate);
 	// inputsPassThrough.search.to(urlTemplate);
 	// inputsPassThrough.per_page.to(urlTemplate);
-	urlTemplate.to(output);
+	urlTemplate.url.to(output);
 	// inputsPassThrough.search.to(urlTemplate);
 	// inputsPassThrough.per_page.to(urlTemplate);
 	// inputsPassThrough.page.to(urlTemplate);
@@ -329,7 +329,7 @@ const b = board((inputs) => {
 
 	const result = spread({ $id: "spreadResult", object: shiftResult.item });
 	const singleResultOutput = base.output({ $id: "singleResultOutput" });
-	result.id.to(singleResultOutput);
+	// result.id.to(singleResultOutput);
 	result.to(singleResultOutput);
 	// meta.page.to(singleResultOutput);
 	// urlTemplate.url.to(singleResultOutput);
