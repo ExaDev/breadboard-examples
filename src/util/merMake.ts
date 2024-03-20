@@ -1,11 +1,24 @@
-import { GraphDescriptor, GraphMetadata, Lambda, toMermaid } from "@google-labs/breadboard";
+import {
+	GraphDescriptor,
+	GraphMetadata,
+	Lambda,
+	toMermaid,
+} from "@google-labs/breadboard";
 import fs from "fs";
 import path from "path";
 
-export async function merMake({ graph, metadata, destination: output = process.cwd() }: {
-	graph: GraphDescriptor | Lambda<any, any>,
-	metadata?: GraphMetadata,
+export async function merMake({
+	graph,
+	metadata,
+	destination: output = process.cwd(),
+	direction,
+	ignoreSubgraphs = false,
+}: {
+	graph: GraphDescriptor | Lambda<any, any>;
+	metadata?: GraphMetadata;
 	destination?: string;
+	direction?: "TB" | "BT" | "LR" | "RL";
+	ignoreSubgraphs?: boolean;
 }) {
 	if (fs.lstatSync(output).isDirectory()) {
 		output = path.join(output, "README.md");
@@ -17,15 +30,20 @@ export async function merMake({ graph, metadata, destination: output = process.c
 	if (typeof graph === "function") {
 		graph = await graph.serialize(metadata);
 	}
-	const mermaid = toMermaid(graph);
+	const mermaid = toMermaid(graph, direction, undefined, ignoreSubgraphs);
 	const condeFence = ["## Mermaid", "```mermaid", mermaid, "```"];
 	const json = JSON.stringify(graph, null, "\t");
 	const jsonCodeFence = ["## JSON", "```json", json, "```"];
 	console.debug("Writing to", output);
-	fs.writeFileSync(output, [
-		metadata?.title ? `# ${metadata.title}` : undefined,
-		metadata?.description ? `> ${metadata.description}` : undefined,
-		condeFence.join("\n"),
-		jsonCodeFence.join("\n"),
-	].filter(Boolean).join("\n\n"));
+	fs.writeFileSync(
+		output,
+		[
+			metadata?.title ? `# ${metadata.title}` : undefined,
+			metadata?.description ? `> ${metadata.description}` : undefined,
+			condeFence.join("\n"),
+			jsonCodeFence.join("\n"),
+		]
+			.filter(Boolean)
+			.join("\n\n")
+	);
 }
