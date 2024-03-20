@@ -56,8 +56,21 @@ const inputSchema: Schema = {
 	required: ["search"],
 	properties: {
 		search: { type: "string" },
-		page: { type: "number", default: "1" },
-		per_page: { type: "number", default: "200" },
+		page: { type: "integer", default: "1" },
+		per_page: { type: "integer", default: "200" },
+		entity: {
+			type: "string",
+			enum: [
+				"works",
+				"authors",
+				"sources",
+				"institutions",
+				"topics",
+				"publishers",
+				"funders",
+				"concepts",
+			],
+		},
 	},
 };
 
@@ -69,8 +82,8 @@ const b = board((inputs) => {
 	const urlTemplate = templates.urlTemplate({
 		$id: "urlTemplate",
 		template:
-			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
-
+			"https://api.openalex.org/{entity}?search={search}&page={page}&per_page={per_page}&select={select}",
+		entity: "works",
 		page: 1,
 		select: "id,display_name,title,relevance_score",
 	});
