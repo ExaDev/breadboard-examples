@@ -362,9 +362,9 @@ const b = board((inputs) => {
 	// nextPage.count.to(nextPageOutput);
 	// nextPage.per_page.to(nextPageOutput);
 
+	nextPage.page.to(urlTemplate);
+	nextPage.per_page.to(urlTemplate);
 	// nextPage.page.to(urlTemplate);
-	// nextPage.per_page.to(urlTemplate);
-	nextPage.to(urlTemplate);
 
 	// inputs.per_page.to(urlTemplate);
 	// inputs.search.to(urlTemplate);
