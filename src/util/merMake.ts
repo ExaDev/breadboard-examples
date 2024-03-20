@@ -10,7 +10,7 @@ import path from "path";
 export async function merMake({
 	graph,
 	metadata,
-	destination: output = process.cwd(),
+	destination: output = process.cwd() || "./",
 	direction,
 	ignoreSubgraphs = false,
 }: {
@@ -20,6 +20,8 @@ export async function merMake({
 	direction?: "TB" | "BT" | "LR" | "RL";
 	ignoreSubgraphs?: boolean;
 }) {
+	output = path.resolve(output);
+	console.log({ output });
 	if (fs.lstatSync(output).isDirectory()) {
 		output = path.join(output, "README.md");
 	} else {
@@ -31,6 +33,8 @@ export async function merMake({
 		graph = await graph.serialize(metadata);
 	}
 	const mermaid = toMermaid(graph, direction, undefined, ignoreSubgraphs);
+	graph.$schema =
+		"https://raw.githubusercontent.com/breadboard-ai/breadboard/main/packages/schema/breadboard.schema.json";
 	const condeFence = ["## Mermaid", "```mermaid", mermaid, "```"];
 	const json = JSON.stringify(graph, null, "\t");
 	const jsonCodeFence = ["## JSON", "```json", json, "```"];
