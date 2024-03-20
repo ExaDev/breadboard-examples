@@ -67,6 +67,18 @@ const b = board((inputs) => {
 	});
 	inputs.to(urlTemplate);
 	base.output({ $id: "urlOutput", url: urlTemplate.url });
+	const input = base.input({
+		$id: "urlInput",
+		schema: {
+			required: ["search"],
+			properties: {
+				search: { type: "string" },
+				page: { type: "number", default: "1" },
+				per_page: { type: "number", default: "200" },
+			},
+		},
+	});
+	// input.to(urlTemplate);
 
 	const fetchUrl = core.fetch({ $id: "fetch", method: "GET" });
 	urlTemplate.url.to(fetchUrl);
@@ -101,7 +113,7 @@ const b = board((inputs) => {
 const serialized = await b.serialize();
 serialized.$schema =
 	"https://raw.githubusercontent.com/breadboard-ai/breadboard/main/packages/schema/breadboard.schema.json";
-fs.writeFileSync("serialized.json", JSON.stringify(serialized, null, 2));
+fs.writeFileSync("serialized.json", JSON.stringify(serialized, null, "\t"));
 
 await merMake({
 	graph: b,
@@ -110,7 +122,7 @@ await merMake({
 });
 fs.writeFileSync(
 	path.join(import.meta.dirname, "board.json"),
-	JSON.stringify(serialized, null, 2)
+	JSON.stringify(serialized, null, "\t")
 );
 
 const runner: BoardRunner = await BoardRunner.fromGraphDescriptor(serialized);
