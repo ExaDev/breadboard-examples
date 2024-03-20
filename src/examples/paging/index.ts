@@ -54,6 +54,7 @@ const progress = code<{ current: number; total: number }>((inputs) => {
 });
 const inputSchema: Schema = {
 	required: ["search"],
+	title: "OpenAlex Search",
 	properties: {
 		search: { type: "string", title: "Search term" },
 		page: { type: "integer", default: "1", title: "Page number" },
@@ -92,7 +93,6 @@ const b = board((inputs) => {
 
 	const input = base.input({
 		$id: "query",
-		title: "Search OpenAlex",
 		schema: inputSchema,
 	});
 	input.to(urlTemplate);

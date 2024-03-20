@@ -156,11 +156,11 @@ classDef slotted stroke:#a64d79
 			"id": "query",
 			"type": "input",
 			"configuration": {
-				"title": "Search OpenAlex",
 				"schema": {
 					"required": [
 						"search"
 					],
+					"title": "OpenAlex Search",
 					"properties": {
 						"search": {
 							"type": "string",
