@@ -110,7 +110,7 @@ await merMake({
 });
 fs.writeFileSync(
 	path.join(import.meta.dirname, "board.json"),
-	JSON.stringify(serialized, null, )
+	JSON.stringify(serialized, null, 2)
 );
 
 const runner: BoardRunner = await BoardRunner.fromGraphDescriptor(serialized);
