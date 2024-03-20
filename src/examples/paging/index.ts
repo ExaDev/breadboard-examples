@@ -52,8 +52,10 @@ const progress = code<{ current: number; total: number }>((inputs) => {
 	return { progress: current / total, current, total };
 });
 
+const debug = false;
 const b = board((inputs) => {
 	const output = base.output({ $id: "main" });
+	const debugOutput = base.output({ $id: "debug" });
 
 	const urlTemplate = templates.urlTemplate({
 		$id: "urlTemplate",
@@ -71,13 +73,12 @@ const b = board((inputs) => {
 
 	const response = spread({ $id: "spreadResponse", object: fetchUrl.response });
 
-	base.output({ $id: "responseOutput", response });
-
-	base.output({ $id: "resultsOutput", results: response.results });
+	if (debug) response.to(debugOutput);
+	if (debug) response.to(debugOutput);
 
 	const meta = spread({ $id: "spreadMeta", object: response.meta });
 
-	base.output({ $id: "metaOutput", meta });
+	if (debug) meta.to(debugOutput);
 
 	const shiftResult = shift({ $id: "shiftResult" });
 	response.results.as("list").to(shiftResult);
@@ -90,7 +91,7 @@ const b = board((inputs) => {
 	const nextPage = nextPageNo({ $id: "nextPage" });
 
 	meta.to(nextPage);
-	base.output({ $id: "nextPageOutput", nextPage });
+	if (debug) nextPage.to(debugOutput);
 
 	nextPage.to(urlTemplate);
 
