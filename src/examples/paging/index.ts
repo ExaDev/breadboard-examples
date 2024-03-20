@@ -255,7 +255,7 @@ const b = board((inputs) => {
 		$id: "urlTemplate",
 		template:
 			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
-		// per_page: inputs.per_page || 10,
+		per_page: 10,
 		page: 1,
 		select: "id,display_name,title,relevance_score",
 		// search: inputs.search,
@@ -293,7 +293,7 @@ const b = board((inputs) => {
 	// inputs.to(urlTemplate);
 	// const urlOutput = base.output({ $id: "urlOutput" });
 
-	urlTemplate.url.to(output);
+	// urlTemplate.url.to(output);
 	// inputs.search.to(urlTemplate);
 	// inputs.search.to(urlOutput).to(output);
 	// urlTemplate.url.to(url).
@@ -422,7 +422,8 @@ class ProbeClass implements Probe {
 }
 
 const kits = [asRuntimeKit(Core), asRuntimeKit(TemplateKit)];
-const inputs = { search: "Artificial Intelligence" };
+// const inputs = { search: "Artificial Intelligence" };
+const inputs = { search: "Artificial Intelligence", per_page: 10 };
 // const inputs = { page: 1, per_page: 2, search: `"Artificial Intelligence"` };
 // const runner = await BoardRunner.fromGraphDescriptor(myBoard);
 
