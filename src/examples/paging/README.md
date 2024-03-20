@@ -163,15 +163,18 @@ classDef slotted stroke:#a64d79
 					],
 					"properties": {
 						"search": {
-							"type": "string"
+							"type": "string",
+							"title": "Search term"
 						},
 						"page": {
 							"type": "integer",
-							"default": "1"
+							"default": "1",
+							"title": "Page number"
 						},
 						"per_page": {
 							"type": "integer",
-							"default": "200"
+							"default": "200",
+							"title": "Results per page"
 						},
 						"entity": {
 							"type": "string",

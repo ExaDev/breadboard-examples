@@ -55,9 +55,9 @@ const progress = code<{ current: number; total: number }>((inputs) => {
 const inputSchema: Schema = {
 	required: ["search"],
 	properties: {
-		search: { type: "string" },
-		page: { type: "integer", default: "1" },
-		per_page: { type: "integer", default: "200" },
+		search: { type: "string", title: "Search term" },
+		page: { type: "integer", default: "1", title: "Page number" },
+		per_page: { type: "integer", default: "200", title: "Results per page" },
 		entity: {
 			type: "string",
 			default: "works",
