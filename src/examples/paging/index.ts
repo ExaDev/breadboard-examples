@@ -96,18 +96,18 @@ const stringJoin = code<
 });
 
 const nextPageNo = code<{
-	page: number;
+	page?: number;
 	per_page: number;
 	count: number;
-}>((inputs) => {
-	const { page, per_page, count } = inputs;
+}>(({ page = 1, count, per_page = 200 }) => {
+	// const { page, per_page, count } = inputs;
 	// final page is the last page
 	const finalPage = Math.ceil(count / per_page);
 	const nextPage = page + 1;
 	if (nextPage > finalPage) {
 		return {};
 	}
-	return { page: nextPage, per_page, count: inputs.count };
+	return { page: nextPage, per_page, count };
 });
 
 const calculateTotalPages = code<{ count: number; per_page: number }>(
