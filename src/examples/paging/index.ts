@@ -143,6 +143,11 @@ const pagesArray = code<{
 	};
 });
 
+const progress = code<{ current: number; total: number }>((inputs) => {
+	const { current, total } = inputs;
+	return { progress: current / total, current, total };
+});
+
 const b = board((inputs) => {
 	// const openAlexSearchUrl = templates.urlTemplate({
 	// 	$id: "makeURL",
@@ -255,12 +260,17 @@ const b = board((inputs) => {
 		$id: "urlTemplate",
 		template:
 			"https://api.openalex.org/works?search={search}&page={page}&per_page={per_page}&select={select}",
-		per_page: 10,
+		// per_page: 10,
+		// per_page: inputs.per_page ?? 10,
 		page: 1,
 		select: "id,display_name,title,relevance_score",
 		// search: inputs.search,
 	});
 	inputs.to(urlTemplate);
+	// inputs.to(urlTemplate);
+	// inputs.search.to(urlTemplate);
+	// inputs.page.to(urlTemplate);
+	// inputs.per_page.to(urlTemplate);
 
 	// const inputsPassThrough = base.output({
 	// $id: "inputsPassThrough",
@@ -331,6 +341,11 @@ const b = board((inputs) => {
 	// const singleResultOutput = base.output({ $id: "singleResultOutput" });
 	// result.id.to(singleResultOutput);
 	result.to(output);
+	urlTemplate.url.as("searchUrl").to(output);
+	// meta.to(output);
+	// meta.page.to(output);
+	// meta.per_page.to(output);
+	// meta.count.to(output);
 	// meta.page.to(singleResultOutput);
 	// urlTemplate.url.to(singleResultOutput);
 	// result.to(singleResultOutput);
@@ -353,17 +368,20 @@ const b = board((inputs) => {
 	// page.to(urlTemplate);
 
 	const nextPage = nextPageNo({ $id: "nextPage" });
-	meta.count.to(nextPage);
-	meta.per_page.to(nextPage);
-	meta.page.to(nextPage);
+	// meta.count.to(nextPage);
+	// meta.per_page.to(nextPage);
+	// meta.page.to(nextPage);
+	meta.to(nextPage);
 	//
 	const nextPageOutput = base.output({ $id: "nextPageOutput" });
-	nextPage.page.to(nextPageOutput);
+	// nextPage.page.to(nextPageOutput);
 	// nextPage.count.to(nextPageOutput);
 	// nextPage.per_page.to(nextPageOutput);
+	nextPage.to(nextPageOutput);
 
-	nextPage.page.to(urlTemplate);
-	nextPage.per_page.to(urlTemplate);
+	// nextPage.page.to(urlTemplate);
+	// nextPage.per_page.to(urlTemplate);
+	nextPage.to(urlTemplate);
 	// nextPage.page.to(urlTemplate);
 
 	// inputs.per_page.to(urlTemplate);
@@ -432,8 +450,8 @@ class ProbeClass implements Probe {
 
 const kits = [asRuntimeKit(Core), asRuntimeKit(TemplateKit)];
 // const inputs = { search: "Artificial Intelligence" };
-const inputs = { search: "Artificial Intelligence", per_page: 10 };
-// const inputs = { page: 1, per_page: 2, search: `"Artificial Intelligence"` };
+// const inputs = { search: "Artificial Intelligence", per_page: 10 };
+const inputs = { per_page: 10, search: `"Artificial Intelligence"` };
 // const runner = await BoardRunner.fromGraphDescriptor(myBoard);
 
 async function runHarness() {
