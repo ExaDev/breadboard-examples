@@ -25,7 +25,6 @@ export type ClaudeParams = {
 	url?: string;
 };
 
-
 export function countTokens(text: string): number {
 	const tokenizer = getTokenizer();
 	const encoded = tokenizer.encode(text.normalize("NFKC"));
@@ -41,9 +40,20 @@ export function getTokenizer(): Tiktoken {
 	return new Tiktoken(tiktokenBPE);
 }
 
-const complete = (input: InputValues): Promise<OutputValues> => {
-	console.log("INPTU", input)
-	return postClaudeCompletion(input as ClaudeParams);
+const complete = async (input: InputValues): Promise<OutputValues> => {
+	let claudeParams = {
+		"model": input["model"],
+	}
+
+	if (input["output"] != undefined) {
+		claudeParams["apiKey"] = input["output"]["CLAUDE_API_KEY"]
+	}
+
+	if (input["text"] != undefined) {
+		claudeParams["userQuestion"] = input["text"]["string"]
+	}
+
+	return await postClaudeCompletion(claudeParams as ClaudeParams);
 }
 
 export const ClaudeKit = new KitBuilder({
@@ -118,7 +128,7 @@ export async function postClaudeCompletion({
 
 		if (!response.ok)
 			throw new Error(`HTTP error! status: ${response.status}:${response.statusText}`);
-
+				
 		return (await response.json()) as ClaudeResponse;
 	} catch (error) {
 		console.error("Error:", error);

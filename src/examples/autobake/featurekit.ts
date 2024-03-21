@@ -136,7 +136,7 @@ const filterFeatureAttributes = code<{feature: any}, OutputValues> (({feature}) 
 })
 
 const selectRandom = code<{ input: ChromeStatusFeatures }, OutputValues>(async ({ input }) => {
-	const myList = input["input"]["features"]
+	const myList = input["features"]
 	const selected = myList[Math.floor(Math.random() * myList.length)]
 
 	return {selected: selected}
@@ -290,14 +290,14 @@ export const FeatureKit = new KitBuilder({
 		output: await chromeStatusFeaturesV2()
 	}),
 	getFeatureResources: async (input) => ({
-		output: await getFeatureResources({ input: input as ChromeStatusFeatures })
+		output: await getFeatureResources({input: input as ChromeStatusFeatures })
 	}),
 	getResourcesForFeature: async ({feature}) => (
 		{
 			output: await getResourcesForFeature({feature : feature as ChromeStatusV1ApiFeature })
 		}
 	),
-	selectRandomFeature: async (features) => (
+	selectRandomFeature: async ({features}) => (
 		{
 			output:  await selectRandom({ input: features as ChromeStatusFeatures })
 		}

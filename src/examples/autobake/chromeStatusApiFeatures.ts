@@ -198,7 +198,6 @@ export type ChromeStatusFeatures = {
 };
 
 export async function chromeStatusApiFeatures(): Promise<ChromeStatusFeatures> {
-	console.log("GETTING CHROME FEATURES")
 	return (await fetchDirtyJson(
 		"https://chromestatus.com/api/v0/features",
 		")]}'\n"

@@ -27,7 +27,6 @@ const concat = code<{ input: string[]; }, OutputValues>(({ input }) => {
 	return { output: input.join("") };
 });
 
-
 const templatePrompt = code<{ selectedFeature: string, featureResources: string, template: string }, OutputValues>(({selectedFeature, featureResources , template }) => {
 	const parameters = parametersFromTemplate(template);
 	const selectedInput = selectedFeature["filtered"]
@@ -44,7 +43,6 @@ const templatePrompt = code<{ selectedFeature: string, featureResources: string,
 	const string = substitute(template, substitutes);
 	return Promise.resolve({ string });
 });
-
 
 export const StringKit = new KitBuilder({
 	url: ".",
