@@ -9,53 +9,13 @@ import { ClaudeKit } from "./kits/ClaudeKit.js"
 import { ConfigKit } from "./kits/ConfigKit.js"
 import { ObjectKit } from "./kits/ObjectKit.js"
 
-const featureKt = addKit(FeatureKit)
+const featureKit = addKit(FeatureKit)
 const claudeKit = addKit(ClaudeKit);
 const stringKit = addKit(StringKit)
 const config = addKit(ConfigKit)
 const objectK = addKit(ObjectKit)
 const coreKit = addKit(Core)
 const objectKit = addKit(ObjectKit)
-
-function filterAttributes(obj: any) {
-    // recursively remove any falsy attributes
-
-    if (!obj) {
-        return
-    } else if (typeof obj === "object") {
-        const newObj: any = {}
-        for (const [key, value] of Object.entries(obj)) {
-            const newValue = filterAttributes(value)
-            if (newValue) {
-                newObj[key] = newValue
-            }
-        }
-        if (Object.keys(newObj).length > 0) {
-            return newObj
-        } else {
-            return
-        }
-    }
-    // 	if array
-    else if (Array.isArray(obj)) {
-        const newArray: any[] = []
-        for (const value of obj) {
-            const newValue = filterAttributes(value)
-            if (newValue) {
-                newArray.push(newValue)
-            }
-        }
-        return newArray
-    }
-
-    return obj
-}
-
-const recursivelyFilterEmptyAttributes = coreKit.runJavascript({
-    name: "filterAttributes",
-    code: filterAttributes.toString(),
-    raw: true
-})
 
 const serverUrl = "https://api.anthropic.com/v1/complete";
 
@@ -66,47 +26,61 @@ const claudeParams = {
 
 const prompt = [
     "Create a markdown document that can be used to teach a junior developer about the feature discussed in the `feature` code block.",
-    "Base the script on the content of the `resources` code block.",
+    "Base the script on the content of the `featureResources` code block.",
     "The first line of the document should be a heading with the name of the feature.",
     "\n",
     "Provide your response formatted as raw markdown.",
     "Only respond with the result of this request.",
     "Do not add any additional information to the script",
     "\n",
-    "```resources",
-    "{{resources}}",
+    "```featureResources",
+    "{{featureResources}}",
     "```",
     "\n",
-    "```feature",
-    "{{feature}}",
+    "```selectedFeature",
+    "{{selectedFeature}}",
     "```",
 ].join("/n");
 
-const autoBakeBoard = board(() => {
-    const features = featureKt.chromeStatusApiFeatures({ $id: "ChromeStatusApiFeatures" }).output
-    const selected = featureKt.selectRandomFeature({$id:"selectRandomFeature", input: features }).output
-    const featureContent = featureKt.getResourcesForFeature({ $id: "getResourcesForFeature", feature: selected })
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const filtered = featureKt.filterFeatureAttributes({ feature: selected })
-    // TODO FEED FILTERED FEATURE AND FEATURE TO TEMPLATE
-    // TODO SEND PROMPT TO CLAUDE
+const autoBakeBoard = board(() => {
+    const features = featureKit.chromeStatusApiFeatures({ $id: "ChromeStatusApiFeatures" })
+    const selected = featureKit.selectRandomFeature({$id:"selectRandomFeature", input: features.output })
+    const featureContent = featureKit.getResourcesForFeature({ $id: "getResourcesForFeature", feature: selected.output })
+
+    const filtered = featureKit.filterFeatureAttributes({ feature: selected.output })
 
     const instructionTemplate = stringKit.template({
         $id: "claudePromptConstructor",
         template: prompt,
     });
+    
+    featureContent.output.as("featureResources").to(instructionTemplate)
+    filtered.output.as("selectedFeature").to(instructionTemplate)
 
-    const claudeApiKey = config.readEnvVar({
-        $id: "getClaudeAPIKey",
-        key: "CLAUDE_API_KEY"
-    });
+    const serverUrl = "https://api.anthropic.com/v1/complete";
 
-    const claudeCompletion = claudeKit.complete({
-        $id: "claudeAPI",
-        ...claudeParams,
-    });
+	const claudeParams = {
+		model: "claude-2",
+		url: `${serverUrl}`,
+	};
 
-    const output = filtered.output
+	const claudeCompletion = claudeKit.complete({
+		$id: "claudeAPI",
+		...claudeParams,
+	});
+
+	const claudeApiKey = config.readEnvVar({
+		key: "CLAUDE_API_KEY",
+        path:"."
+	});
+
+    // claudeApiKey.output.to(claudeCompletion);
+    // instructionTemplate.output.as("text").to(claudeCompletion);
+
+
+    const output = claudeApiKey.output
 
     return { output }
 })
@@ -117,7 +91,7 @@ const serializedBoard = await autoBakeBoard.serialize({
     url: ".",
 })
 
-const kits = [asRuntimeKit(FeatureKit), asRuntimeKit(StringKit), asRuntimeKit(FeatureKit), asRuntimeKit(FeatureKit), asRuntimeKit(ObjectKit), asRuntimeKit(Core)]
+const kits = [asRuntimeKit(ConfigKit) ,asRuntimeKit(FeatureKit), asRuntimeKit(FeatureKit), asRuntimeKit(FeatureKit), asRuntimeKit(ObjectKit), asRuntimeKit(Core), asRuntimeKit(StringKit)]
 
 // running board from json and providing kit at runtime
 const runner = await BoardRunner.fromGraphDescriptor(serializedBoard);

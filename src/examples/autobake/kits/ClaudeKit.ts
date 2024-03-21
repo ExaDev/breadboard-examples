@@ -42,6 +42,7 @@ export function getTokenizer(): Tiktoken {
 }
 
 const complete = (input: InputValues): Promise<OutputValues> => {
+	console.log("INPTU", input)
 	return postClaudeCompletion(input as ClaudeParams);
 }
 

@@ -137,10 +137,9 @@ const filterFeatureAttributes = code<{feature: any}, OutputValues> (({feature}) 
 
 const selectRandom = code<{ input: ChromeStatusFeatures }, OutputValues>(async ({ input }) => {
 	const myList = input["input"]["features"]
-
 	const selected = myList[Math.floor(Math.random() * myList.length)]
 
-	return { selected: selected}
+	return {selected: selected}
 })
 
 const getFeatureResources = code<{ input: ChromeStatusFeatures }, OutputValues>(async ({ input }) => {
