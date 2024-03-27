@@ -33,17 +33,16 @@ export const HackerNewsFirebaseKit = new KitBuilder({
 	): Promise<HNFirebaseStoryData> => {
 		const id: string = <string>inputs.id;
 		const url = `https://hacker-news.firebaseio.com/v0/item/${id}.json`;
-		// https://news.ycombinator.com/item?id=
 		const hnUrl = `https://news.ycombinator.com/item?id=${id}`;
 		const response = await fetch(url);
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
 		const story = {
 			id,
 			apiUrl: url,
 			hnUrl,
 			...(await response.json()),
 		};
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
 		return { ...story };
 	},
 });

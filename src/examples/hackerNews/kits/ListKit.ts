@@ -11,7 +11,7 @@ import {
 	ListSpliceOutput,
 	SplitInput,
 	SplitOutput
-} from "./ListTypes.js";
+} from "../ListTypes.js";
 
 export type EmptyObject = Record<string, never>;
 

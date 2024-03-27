@@ -1,4 +1,4 @@
-import { InputValues, OutputValues } from "@google-labs/breadboard";
+import { InputValues, OutputValues, code } from "@google-labs/breadboard";
 import { KitBuilder } from "@google-labs/breadboard/kits";
 
 export type PostItem = {
@@ -83,10 +83,11 @@ export async function search(
     });
 }
 
+
 export const HackerNewsAlgoliaKit = new KitBuilder({
     url: "npm:@exadev/breadboard-kits/HackerNewsAlgoliaKit",
 }).build({
-    async getStory(inputs: InputValues): Promise<OutputValues & Story> {
+    async getStoryFromId(inputs: InputValues): Promise<OutputValues & Story> {
         const id: string = inputs.id as string;
         const url = `https://hn.algolia.com/api/v1/items/${id}`;
         // return {url}
@@ -98,7 +99,7 @@ export const HackerNewsAlgoliaKit = new KitBuilder({
         });
     },
 
-    search: async (input) => (
+    search: async (input: InputValues) => (
         {
             output: await search(input as HackerNewAlgoliaSearchParameters)
         }
