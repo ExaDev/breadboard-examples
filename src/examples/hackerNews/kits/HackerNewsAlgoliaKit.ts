@@ -1,6 +1,9 @@
 import { InputValues, OutputValues, code } from "@google-labs/breadboard";
 import { KitBuilder } from "@google-labs/breadboard/kits";
 
+// KEEP THESE KITS FOR NEW AS THEY HAVE BEEN REFACTORED TO WORK WITH THE NEW SYNTAX
+// THEY MIGHT BE USEFUL IN THE FUTURE
+
 export type PostItem = {
     author: string;
     created_at: string;
@@ -73,10 +76,12 @@ export async function search(
     if (page) {
         url.searchParams.set("page", page.toString());
     }
+    console.log("URL", url.href)
     const response = await fetch(url.href);
     const { hits } = (await response.json()) as unknown as {
         hits: PostItem[];
     };
+    
     return Promise.resolve({
         algoliaUrl: url.href,
         hits: inputs.limit ? hits.slice(0, inputs.limit) : hits,
@@ -90,7 +95,7 @@ export const HackerNewsAlgoliaKit = new KitBuilder({
     async getStoryFromId(inputs: InputValues): Promise<OutputValues & Story> {
         const id: string = inputs.id as string;
         const url = `https://hn.algolia.com/api/v1/items/${id}`;
-        // return {url}
+  
         const response = await fetch(url);
         const story: Story = (await response.json()) as unknown as Story;
         return Promise.resolve({

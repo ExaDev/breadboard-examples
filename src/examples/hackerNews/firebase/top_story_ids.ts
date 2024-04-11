@@ -1,5 +1,4 @@
 import { board, base, asRuntimeKit, BoardRunner, code } from "@google-labs/breadboard";
-
 import Core, { core } from "@google-labs/core-kit";
 
 const limitInputSchema = {
@@ -29,7 +28,7 @@ export const firebaseBoardTopStoryIds = await board(() => {
 
     const { response } = core.fetch({ $id: "fetch", method: "GET", url: "https://hacker-news.firebaseio.com/v0/topstories.json" });
     const output = base.output({ $id: "main" });
-    const sliced = slice({ list: response as unknown as number[], limit: input.limit })
+    const sliced = slice({ list: response as unknown as number[], limit: input.limit as unknown as number })
 
     sliced.to(output)
 
@@ -54,3 +53,5 @@ for await (const stop of runner.run({ kits: kits })) {
         console.log(stop.outputs)
     }
 }
+
+export default firebaseBoardTopStoryIds

@@ -34,7 +34,7 @@ const firebaseBoardStoryFromId = await board(() => {
 
     const urlTemplate = templates.urlTemplate({
         $id: "urlTemplate",
-        template: "https://hacker-news.firebaseio.com/v0/item/{storyID}.json",
+        template: "https://hn.algolia.com/api/v1/items/{storyID}",
     });
 
     input.to(urlTemplate);
@@ -47,15 +47,13 @@ const firebaseBoardStoryFromId = await board(() => {
 
     response.to(output)
 
-    console.log(urlTemplate.url)
-
     return {output}
 
 }).serialize({
     title: "Hacker News Firebase API Story by ID",
-    description: "Board which returns story json",
+    description: "Board which returns story contents",
     version: "0.0.1",
-    url: "https://github.com/ExaDev/breadboard-examples/tree/hackerNews-toolworker/src/examples/hackerNews/firebase"
+    url: "https://github.com/ExaDev/breadboard-examples/tree/hackerNews-toolworker/src/examples/hackerNews/algolia"
 })
 
 firebaseBoardStoryFromId.$schema = boardSchema
@@ -66,7 +64,7 @@ const runner = await BoardRunner.fromGraphDescriptor(firebaseBoardStoryFromId);
 for await (const stop of runner.run({ kits: kits })) {
     if (stop.type === "input") {
         stop.inputs = {
-            storyID: "39998740",
+            storyID: "39788322",
         };
     } else if (stop.type === "output") {
         console.log(stop.outputs)
