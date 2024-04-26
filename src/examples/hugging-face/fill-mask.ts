@@ -1,6 +1,6 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types";
+import { HuggingFaceTask } from "./types.js";
 
 const dataSchema = {
     type: "string",
@@ -45,7 +45,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleFillMaskParams = code<{ input: HuggingFaceFillMaskRawParams}>((input) => {
+const handleParams = code<{ input: HuggingFaceFillMaskRawParams}>((input) => {
     const { inputs, use_cache, wait_for_model} = input
 
     const request: HuggingFaceFillMaskParams = {
@@ -61,7 +61,7 @@ const handleFillMaskParams = code<{ input: HuggingFaceFillMaskRawParams}>((input
     return { payload }
 })
 
-const huggingFaceBoardSummarization = board(() => {
+const huggingFaceBoardFillMask = board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
@@ -81,7 +81,7 @@ const huggingFaceBoardSummarization = board(() => {
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
 
-    const { payload } = handleFillMaskParams(inputs)
+    const { payload } = handleParams(inputs)
 
     const response = core.fetch({
         headers: auth,
@@ -98,5 +98,5 @@ const huggingFaceBoardSummarization = board(() => {
 const data = "The first president of the USA was called[MASK]."
 
 console.log(
-    JSON.stringify(await huggingFaceBoardSummarization({ inputs: data, apiKey: "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", use_cache:true, wait_for_model: true}), null, 2)
+    JSON.stringify(await huggingFaceBoardFillMask({ inputs: data, apiKey: "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", use_cache:true, wait_for_model: true}), null, 2)
 );

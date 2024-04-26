@@ -1,6 +1,6 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types";
+import { HuggingFaceTask } from "./types.js";
 
 const dataSchema = {
     type: "string",
@@ -45,7 +45,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleFillMaskParams = code<{ input: HuggingFaceSentenceSimilarityRawParams}>((input) => {
+const handleParams = code<{ input: HuggingFaceSentenceSimilarityRawParams}>((input) => {
     const { source_sentence, sentences,} = input
 
     const payload: HuggingFaceSentenceSimilarityParams = {"inputs": {
@@ -76,7 +76,7 @@ const huggingFaceBoardSentenceSimilarity = board(() => {
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
-    const { payload } = handleFillMaskParams(inputs)
+    const { payload } = handleParams(inputs)
    
     const response = core.fetch({
         headers: auth,

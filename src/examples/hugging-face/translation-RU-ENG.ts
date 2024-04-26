@@ -23,9 +23,24 @@ const keySchema = {
     description: "The hugging face api key"
 };
 
-export type HuggingFaceTextClassificationRawParams = {
+
+export type HuggingFaceTranslationRawParams = {
     inputs: string
+
+    use_cache: boolean
+    wait_for_model: boolean
 };
+
+export type HuggingFaceTranslationParams = {
+    inputs: string
+    parameters: {
+        options: {
+            use_cache: boolean
+            wait_for_model: boolean
+        }
+    }
+};
+
 
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key
@@ -34,24 +49,35 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingFaceTextClassificationRawParams}>((input) => {
-    const {inputs} = input
+const handleParams = code<{ input: HuggingFaceTranslationRawParams}>((input) => {
+    const {
+        inputs,
+        use_cache,
+        wait_for_model
+    } = input
 
-    const request: HuggingFaceTextClassificationRawParams = {inputs: inputs}
+    const request: HuggingFaceTranslationParams = {
+        inputs: inputs,
+        parameters: {
+            options: {
+                use_cache: use_cache,
+                wait_for_model: wait_for_model
+            }
+        }
+    }
 
     const payload = JSON.stringify(request)
 
     return { payload }
 })
 
-// TODO fix names
-const huggingFaceBoardSentenceSimilarity = board(() => {
+const huggingFaceBoardTextGeneration = board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
-            title: "Hugging Face Schema For Text Classification",
+            title: "Hugging Face Schema For Text 2 Text Generation",
+            // TODO fix the schema
             properties: {
-                // TODO fix the schema
                 inputs: dataSchema,
                 task: taskSchema,
                 apiKey: keySchema
@@ -60,26 +86,27 @@ const huggingFaceBoardSentenceSimilarity = board(() => {
         type: "string",
     })
 
-    const task = HuggingFaceTask.textClassification
+    const task = HuggingFaceTask.translation
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
+
     const { payload } = handleParams(inputs)
-   
+
     const response = core.fetch({
         headers: auth,
         method: "POST",
         body: payload,
         url: task
     })
-    
+
     response.to(output)
+
     return { output }
 })
 
-const inputs = "I like you. I love you"
+const data = "Меня зовут Вольфганг и я живу в Берлине"
 
 console.log(
-    JSON.stringify(await huggingFaceBoardSentenceSimilarity({ inputs: inputs,  apiKey: "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"}), null, 2)
+    JSON.stringify(await huggingFaceBoardTextGeneration({ inputs: data, apiKey: "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", use_cache:true, wait_for_model: true}), null, 2)
 );
-

@@ -24,27 +24,34 @@ const keySchema = {
 };
 
 
-export type HuggingFaceSummarizationRawParams = {
+export type HuggingFaceTextGenerationRawParams = {
     inputs: string
-    min_length: number;
-    max_length: number;
     top_k: number;
     top_p: number;
     temperature: number;
     repetition_penalty: number;
+    max_new_tokens: number;
     max_time: number;
+    return_full_text: boolean;
+    num_return_sequences: number;
+    do_sample: boolean
+
+    use_cache: boolean
+    wait_for_model: boolean
 };
 
-export type HuggingFaceSummarizationParams = {
+export type HuggingFaceTextGenerationParams = {
     inputs: string
     parameters: {
-        min_length: number;
-        max_length: number;
         top_k: number;
         top_p: number;
         temperature: number;
         repetition_penalty: number;
+        max_new_tokens: number;
         max_time: number;
+        return_full_text: boolean;
+        num_return_sequences: number;
+        do_sample: boolean
 
         options: {
             use_cache: boolean
@@ -53,6 +60,7 @@ export type HuggingFaceSummarizationParams = {
     }
 };
 
+
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key
     const auth = { Authorization: `Bearer ${key}` }
@@ -60,16 +68,37 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingFaceSummarizationRawParams}>((input) => {
-    const { inputs, min_length, max_length, top_k, top_p, temperature, repetition_penalty, max_time } = input
+const handleParams = code<{ input: HuggingFaceTextGenerationRawParams}>((input) => {
+    const {
+        inputs,
+        top_k,
+        top_p,
+        temperature,
+        repetition_penalty,
+        max_new_tokens,
+        max_time,
+        return_full_text,
+        num_return_sequences,
+        do_sample,
+        use_cache,
+        wait_for_model
+    } = input
 
-    const request: HuggingFaceSummarizationParams = {
+    const request: HuggingFaceTextGenerationParams = {
         inputs: inputs,
         parameters: {
-            min_length: min_length, max_length: max_length, top_k: top_k, top_p: top_p, temperature: temperature, repetition_penalty: repetition_penalty, max_time: max_time,
+            top_k:top_k,
+            top_p: top_p,
+            temperature: temperature,
+            repetition_penalty: repetition_penalty,
+            max_new_tokens: max_new_tokens,
+            max_time: max_time,
+            return_full_text: return_full_text,
+            num_return_sequences: num_return_sequences,
+            do_sample: do_sample,
             options: {
-                use_cache: false,
-                wait_for_model: false
+                use_cache: use_cache,
+                wait_for_model: wait_for_model
             }
         }
     }
@@ -79,11 +108,11 @@ const handleParams = code<{ input: HuggingFaceSummarizationRawParams}>((input) =
     return { payload }
 })
 
-const huggingFaceBoardSummarization = board(() => {
+const huggingFaceBoardTextGeneration = board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
-            title: "Hugging Face Schema For Summarization",
+            title: "Hugging Face Schema For Text Generation",
             // TODO fix the schema
             properties: {
                 inputs: dataSchema,
@@ -113,8 +142,8 @@ const huggingFaceBoardSummarization = board(() => {
     return { output }
 })
 
-const data = "The tower is 324 metres (1,063 ft) tall, about the same height as an 81-storey building, and the tallest structure in Paris. Its base is square, measuring 125 metres (410 ft) on each side. During its construction, the Eiffel Tower surpassed the Washington Monument to become the tallest man-made structure in the world, a title it held for 41 years until the Chrysler Building in New York City was finished in 1930. It was the first structure to reach a height of 300 metres. Due to the addition of a broadcasting aerial at the top of the tower in 1957, it is now taller than the Chrysler Building by 5.2 metres (17 ft). Excluding transmitters, the Eiffel Tower is the second tallest free-standing structure in France after the Millau Viaduct."
+const data = "The answer to the universe is"
 
 console.log(
-    JSON.stringify(await huggingFaceBoardSummarization({ inputs: data, temperature: 1, apiKey: "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", }), null, 2)
+    JSON.stringify(await huggingFaceBoardTextGeneration({ inputs: data, apiKey: "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", use_cache:true, wait_for_model: true}), null, 2)
 );

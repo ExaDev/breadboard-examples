@@ -4,18 +4,19 @@ import { code } from "@google-labs/breadboard";
 // Some types that will be used when dynamic schemas are available
 
 export const HuggingFaceTask = {
-    fillMaskTask: "https://api-inference.huggingface.co/models/bert-base-uncased",
+    fillMask: "https://api-inference.huggingface.co/models/bert-base-uncased",
     summarization: "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",
     questionAnswering: "https://api-inference.huggingface.co/models/deepset/roberta-base-squad2",
-    // tableQuestionAnswering: "https://api-inference.huggingface.co/models/google/tapas-base-finetuned-wtq",
     sentenceSimilarity: "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2",
     textClassification: "https://api-inference.huggingface.co/models/distilbert-base-uncased-finetuned-sst-2-english",
     textGeneration: "https://api-inference.huggingface.co/models/gpt2",
-    tokenClassification: "https://api-inference.huggingface.co/models/dbmdz/bert-large-cased-finetuned-conll03-english",
+    tokenClassification: "https://api-inference.huggingface.co/models/ml6team/keyphrase-extraction-kbir-inspec",
     namedEntityRecognition: "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-ru-en",
     translation: "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-ru-en",
-    zeroShotClassification: "https://api-inference.huggingface.co/models/facebook/bart-large-mnli",
+    labelling: "https://api-inference.huggingface.co/models/facebook/bart-large-mnli",
     conversational: "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large",
+    audioTranscript: "https://api-inference.huggingface.co/models/openai/whisper-large-v3",
+    imageClassification: "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 } as const;
 
 

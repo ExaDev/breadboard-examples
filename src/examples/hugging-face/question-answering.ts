@@ -1,6 +1,6 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types";
+import { HuggingFaceTask } from "./types.js";
 
 const dataSchema = {
     type: "string",
@@ -45,7 +45,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleFillMaskParams = code<{ input: HuggingQuestionAnsweringRawParams}>((input) => {
+const handleParams = code<{ input: HuggingQuestionAnsweringRawParams}>((input) => {
     const { question, context,} = input
 
     const payload: HuggingQuestionAnsweringParams = {"inputs": {
@@ -56,7 +56,7 @@ const handleFillMaskParams = code<{ input: HuggingQuestionAnsweringRawParams}>((
     return { payload }
 })
 
-const huggingFaceBoardSummarization = board(() => {
+const huggingFaceBoardQuestionAnswering = board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
@@ -75,7 +75,7 @@ const huggingFaceBoardSummarization = board(() => {
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
-    const { payload } = handleFillMaskParams(inputs)
+    const { payload } = handleParams(inputs)
    
     const response = core.fetch({
         headers: auth,
@@ -92,6 +92,6 @@ const question = "What is my name?"
 const context = "My name is Clara and I live in Berkeley."
 
 console.log(
-    JSON.stringify(await huggingFaceBoardSummarization({ question: question, context: context,  apiKey: "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", use_cache:true, wait_for_model: true}), null, 2)
+    JSON.stringify(await huggingFaceBoardQuestionAnswering({ question: question, context: context,  apiKey: "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", use_cache:true, wait_for_model: true}), null, 2)
 );
 
