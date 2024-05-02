@@ -22,34 +22,3 @@ export const HuggingFaceTask = {
 
 export type HuggingFaceTask =
     (typeof HuggingFaceTask)[keyof typeof HuggingFaceTask];
-
-
-export type HuggingFaceFillMaskParams = {
-    inputs: string
-    options: {
-        use_cache: boolean;
-        wait_for_model: boolean;
-    }
-};
-
-
-export type HuggingFaceQuestionAnsweringParams = {
-    inputs: {
-        question: string;
-        context: string;
-    }
-};
-
-export type HuggingFaceSentenceSimilarityParams = {
-    inputs: {
-        source_sentence: string;
-        sentences: string[];
-    }
-};
-
-
-const selectTask = code<{ task: string }>((inputs) => {
-    const task = HuggingFaceTask[inputs.task as keyof typeof HuggingFaceTask]
-
-    return { task };
-});
