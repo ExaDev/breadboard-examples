@@ -2,18 +2,11 @@ import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
 import { HuggingFaceTask } from "./types.js";
 
-const dataSchema = {
+const inputsSchema = {
     type: "string",
-    title: "data",
-    default: "data",
-    description: "The data to send to the hugging face api"
-};
-
-const taskSchema = {
-    type: "string",
-    title: "task",
-    default: "summarization",
-    description: "The task for the board"
+    title: "inputs",
+    default: "In this work, we explore how to learn task specific language models aimed towards learning rich representation of keyphrases from text documents. We experiment with different masking strategies for pre-training transformer language models (LMs) in discriminative as well as generative settings. In the discriminative setting, we introduce a new pre-training objective - Keyphrase Boundary Infilling with Replacement (KBIR), showing large gains in performance (up to 9.26 points in F1) over SOTA, when LM pre-trained using KBIR is fine-tuned for the task of keyphrase extraction. In the generative setting, we introduce a new pre-training setup for BART - KeyBART, that reproduces the keyphrases related to the input text in the CatSeq format, instead of the denoised original input. This also led to gains in performance (up to 4.33 points inF1@M) over SOTA for keyphrase generation. Additionally, we also fine-tune the pre-trained language models on named entity recognition(NER), question answering (QA), relation extraction (RE), abstractive summarization and achieve comparable performance with that of the SOTA, showing that learning rich representation of keyphrases is indeed beneficial for many other fundamental NLP task",
+    description: "The data to send to the hugging face api token classification endpoint"
 };
 
 const keySchema = {
@@ -23,6 +16,32 @@ const keySchema = {
     description: "The hugging face api key"
 };
 
+const aggregationStrategySchema = {
+    type: "string",
+    title: "aggregation_strategy",
+    default: "simple",
+    description: `There are several aggregation strategies:
+    none: Every token gets classified without further aggregation.
+    simple: Entities are grouped according to the default schema (B-, I- tags get merged when the tag is similar).
+    first: Same as the simple strategy except words cannot end up with different tags. Words will use the tag of the first token when there is ambiguity.
+    average: Same as the simple strategy except words cannot end up with different tags. Scores are averaged across tokens and then the maximum label is applied.
+    max: Same as the simple strategy except words cannot end up with different tags. Word entity will be the token with the maximum score.`
+};
+
+
+const useCacheSchema = {
+    type: "boolean",
+    title: "use_cache",
+    default: "true",
+    description: "Boolean. There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query"
+};
+
+const waitForModelSchema = {
+    type: "boolean",
+    title: "wait_for_model",
+    default: "false",
+    description: " Boolean. If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places"
+};
 
 export type HuggingFaceTokenClassificationRawParams = {
     inputs: string
@@ -35,7 +54,7 @@ export type HuggingFaceTokenClassificationRawParams = {
 export type HuggingFaceTokenClassificationParams = {
     inputs: string
     parameters: {
-        aggregation_strategy : "simple" | "first" | "average"
+        aggregation_strategy: "simple" | "first" | "average"
         options: {
             use_cache: boolean
             wait_for_model: boolean
@@ -51,7 +70,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingFaceTokenClassificationRawParams}>((input) => {
+const handleParams = code<{ input: HuggingFaceTokenClassificationRawParams }>((input) => {
     const {
         inputs,
         aggregation_strategy,
@@ -68,49 +87,50 @@ const handleParams = code<{ input: HuggingFaceTokenClassificationRawParams}>((in
                 wait_for_model: wait_for_model
             }
         }
-    }
+    };
 
-    const payload = JSON.stringify(request)
+    const payload = JSON.stringify(request);
 
     return { payload }
-})
+});
 
-const huggingFaceBoardTextGeneration = board(() => {
+const huggingFaceBoardTokenClassification = board(() => {
     const inputs = base.input({
-        $id: "query",
+        $id: "token-classification-params",
         schema: {
-            title: "Hugging Face Schema For Text 2 Text Generation",
-            // TODO fix the schema
+            title: "Hugging Face Schema for token classification",
+
             properties: {
-                inputs: dataSchema,
-                task: taskSchema,
-                apiKey: keySchema
+                inputs: inputsSchema,
+                apiKey: keySchema,
+                aggregation_strategy: aggregationStrategySchema,
+                use_cache: useCacheSchema,
+                wait_for_model: waitForModelSchema
             },
         },
         type: "string",
-    })
+    });
 
     const task = HuggingFaceTask.tokenClassification
     const output = base.output({ $id: "main" });
 
-    const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
-
-    const { payload } = handleParams(inputs)
+    const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
+    const { payload } = handleParams(inputs);
 
     const response = core.fetch({
         headers: auth,
         method: "POST",
         body: payload,
         url: task
-    })
+    });
 
-    response.to(output)
+    response.to(output);
 
     return { output }
-})
+});
 
 const data = "In this work, we explore how to learn task specific language models aimed towards learning rich representation of keyphrases from text documents. We experiment with different masking strategies for pre-training transformer language models (LMs) in discriminative as well as generative settings. In the discriminative setting, we introduce a new pre-training objective - Keyphrase Boundary Infilling with Replacement (KBIR), showing large gains in performance (up to 9.26 points in F1) over SOTA, when LM pre-trained using KBIR is fine-tuned for the task of keyphrase extraction. In the generative setting, we introduce a new pre-training setup for BART - KeyBART, that reproduces the keyphrases related to the input text in the CatSeq format, instead of the denoised original input. This also led to gains in performance (up to 4.33 points inF1@M) over SOTA for keyphrase generation. Additionally, we also fine-tune the pre-trained language models on named entity recognition(NER), question answering (QA), relation extraction (RE), abstractive summarization and achieve comparable performance with that of the SOTA, showing that learning rich representation of keyphrases is indeed beneficial for many other fundamental NLP task"
 
 console.log(
-    JSON.stringify(await huggingFaceBoardTextGeneration({ inputs: data, aggregation_strategy:"simple", apiKey: "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", use_cache:true, wait_for_model: true}), null, 2)
+    JSON.stringify(await huggingFaceBoardTokenClassification({ inputs: data, aggregation_strategy: "simple", apiKey: "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", use_cache: true, wait_for_model: true }), null, 2)
 );
