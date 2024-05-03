@@ -50,6 +50,10 @@ export type HuggingFaceSentenceSimilarityParams = {
     inputs: {
         source_sentence: string
         sentences: string[]
+    },
+    options: {
+        use_cache: boolean,
+        wait_for_model: boolean
     }
 };
 
@@ -60,13 +64,18 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ source_sentence: string, sentences: string[]}>((input) => {
-    const { source_sentence, sentences } = input
+const handleParams = code<{ source_sentence: string, sentences: string[], use_cache: boolean, wait_for_model: boolean }>((input) => {
+    const { source_sentence, sentences, use_cache, wait_for_model } = input
 
     const payload: HuggingFaceSentenceSimilarityParams = {
         "inputs": {
             source_sentence: source_sentence,
             sentences: sentences,
+        },
+        "options":
+        {
+            use_cache: use_cache,
+            wait_for_model: wait_for_model
         }
     };
 
@@ -82,8 +91,8 @@ const serialized = await board(() => {
                 source_sentence: soruceSentenceSchema,
                 sentences: sentencesSchema,
                 apiKey: keySchema,
-                // use_cache: useCacheSchema,
-                // wait_for_model: waitForModelSchema
+                use_cache: useCacheSchema,
+                wait_for_model: waitForModelSchema
             },
         },
         type: "string",
@@ -93,7 +102,12 @@ const serialized = await board(() => {
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
-    const { payload } = handleParams({source_sentence: inputs.source_sentence as unknown as string, sentences: inputs.sentences as unknown as string[]});
+    const { payload } = handleParams({
+        source_sentence: inputs.source_sentence as unknown as string,
+        sentences: inputs.sentences as unknown as string[],
+        use_cache: inputs.use_cache as unknown as boolean,
+        wait_for_model: inputs.wait_for_model as unknown as boolean
+    });
 
     const response = core.fetch({
         headers: auth,
