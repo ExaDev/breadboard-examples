@@ -53,56 +53,14 @@
 		{
 			"from": "query",
 			"to": "fn-4",
-			"out": "temperature",
-			"in": "temperature"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "repetition_penalty",
-			"in": "repetition_penalty"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "max_new_tokens",
-			"in": "max_new_tokens"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "max_time",
-			"in": "max_time"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "return_full_text",
-			"in": "return_full_text"
+			"out": "max_length",
+			"in": "max_length"
 		},
 		{
 			"from": "query",
 			"to": "fn-4",
 			"out": "num_return_sequences",
 			"in": "num_return_sequences"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "do_sample",
-			"in": "do_sample"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "use_cache",
-			"in": "use_cache"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "wait_for_model",
-			"in": "wait_for_model"
 		}
 	],
 	"nodes": [
@@ -131,7 +89,7 @@
 			"type": "fetch",
 			"configuration": {
 				"method": "POST",
-				"url": "https://api-inference.huggingface.co/models/gpt2"
+				"url": "https://api-inference.huggingface.co/models/openai-community/gpt2"
 			}
 		},
 		{
@@ -179,58 +137,11 @@
 							"default": "None",
 							"description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top_p"
 						},
-						"temperature": {
+						"max_length": {
 							"type": "number",
-							"title": "temperature",
-							"default": "1.0",
-							"description": "The temperature of the sampling operation. 1 means regular sampling, 0 means always take the highest score, 100.0 is getting closer to uniform probability"
-						},
-						"repetition_penalty": {
-							"type": "number",
-							"title": "repetition_penalty",
-							"default": "1.0",
-							"description": "The more a token is used within generation the more it is penalized to not be picked in successive generation passes"
-						},
-						"max_new_tokens": {
-							"type": "number",
-							"title": "max_tokens",
-							"default": "None",
-							"description": "The amount of new tokens to be generated, this does not include the input length it is a estimate of the size of generated text you want. Each new tokens slows down the request, so look for balance between response times and length of text generated"
-						},
-						"max_time": {
-							"type": "number",
-							"title": "max_time",
-							"default": "None",
-							"description": "The amount of time in seconds that the query should take maximum. Network can cause some overhead so it will be a soft limit. Use that in combination with max_new_tokens for best results"
-						},
-						"return_full_text": {
-							"type": "boolean",
-							"title": "return_full_text",
-							"default": "true",
-							"description": "Bool. If set to False, the return results will not contain the original query making it easier for prompting"
-						},
-						"num_return_sequences": {
-							"type": "number",
-							"title": "num_return_sequences",
-							"default": "1"
-						},
-						"do_sample": {
-							"type": "boolean",
-							"title": "do_sample",
-							"default": "true",
-							"description": "Bool. Whether or not to use sampling, use greedy decoding otherwise"
-						},
-						"use_cache": {
-							"type": "boolean",
-							"title": "use_cache",
-							"default": "true",
-							"description": "Boolean. There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query"
-						},
-						"wait_for_model": {
-							"type": "boolean",
-							"title": "wait_for_model",
-							"default": "false",
-							"description": " Boolean. If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places"
+							"title": "max_length",
+							"default": "100",
+							"description": "Max Length of the input"
 						}
 					}
 				},
@@ -297,7 +208,7 @@
 					"id": "fn-4-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_4(input) {const{inputs,top_k,top_p,temperature,repetition_penalty,max_new_tokens,max_time,return_full_text,num_return_sequences,do_sample,use_cache,wait_for_model}=input;const request={inputs,parameters:{top_k,top_p,temperature,repetition_penalty,max_new_tokens,max_time,return_full_text,num_return_sequences,do_sample,options:{use_cache,wait_for_model}}};const payload=JSON.stringify(request);return{payload}}",
+						"code": "function fn_4(input) {const{inputs,top_k,top_p,max_length,num_return_sequences}=input;const payload={inputs,parameters:{top_k,top_p,max_length,num_return_sequences}};return{payload}}",
 						"name": "fn_4",
 						"raw": true
 					}
