@@ -1,6 +1,7 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types.js";
+import fs from "fs"
+import path from "path";
 
 const inputsSchema = {
     type: "string",
@@ -51,7 +52,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingFaceFillMaskRawParams }>((input) => {
+const handleParams = code<{ inputs: string, use_cache:boolean, wait_for_model: boolean }>((input) => {
     const { inputs, use_cache, wait_for_model } = input
 
     const request: HuggingFaceFillMaskParams = {
@@ -67,7 +68,7 @@ const handleParams = code<{ input: HuggingFaceFillMaskRawParams }>((input) => {
     return { payload }
 });
 
-const huggingFaceBoardFillMask = board(() => {
+const serialized = await board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
@@ -82,11 +83,11 @@ const huggingFaceBoardFillMask = board(() => {
         type: "string",
     });
 
-    const task = HuggingFaceTask.fillMask
+    const task = "https://api-inference.huggingface.co/models/bert-base-uncased"
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
-    const { payload } = handleParams(inputs);
+    const { payload } = handleParams({inputs: inputs.inputs as unknown as string, use_cache:inputs.use_cache as unknown as boolean, wait_for_model: inputs.wait_for_model as unknown as boolean });
 
     const response = core.fetch({
         headers: auth,
@@ -98,10 +99,13 @@ const huggingFaceBoardFillMask = board(() => {
     response.to(output);
 
     return { output }
-});
+}).serialize({
+    title: "Hugging Face Fill Mask",
+    description: "Board which calls the Hugging Face Fill Mask Endpoint"
+})
 
-const data = "The first president of the USA was called[MASK]."
 
-console.log(
-    JSON.stringify(await huggingFaceBoardFillMask({ inputs: data, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
+fs.writeFileSync(
+	path.join(".", "board.json"),
+	JSON.stringify(serialized, null, "\t")
 );
