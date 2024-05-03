@@ -71,7 +71,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ inputs: string, top_k: number, top_p:number, max_length: number, num_return_sequences: number}>((input) => {
+const handleParams = code<{ inputs: string, top_k: number, top_p: number, max_length: number, num_return_sequences: number}>((input) => {
     const {
         inputs,
         top_k,
@@ -103,7 +103,8 @@ const serialized = await board(() => {
                 apiKey: keySchema,
                 top_k: topKSchema,
                 top_p: topPSchema,
-                max_length: maxLengthSchema
+                max_length: maxLengthSchema,
+                num_return_sequences: numReturnSequencesSchema
             },
         },
         type: "string",

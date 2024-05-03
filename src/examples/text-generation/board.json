@@ -142,6 +142,12 @@
 							"title": "max_length",
 							"default": "100",
 							"description": "Max Length of the input"
+						},
+						"num_return_sequences": {
+							"type": "number",
+							"title": "num_return_sequences",
+							"default": "3",
+							"description": "Number of responses "
 						}
 					}
 				},
