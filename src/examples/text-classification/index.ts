@@ -73,7 +73,8 @@ const serialized = await board(() => {
     const { payload } = handleParams({
         inputs: inputs.inputs as unknown as string,
         use_cache: inputs.use_cache as unknown as boolean,
-        wait_for_model: inputs.wait_for_model as unknown as boolean});
+        wait_for_model: inputs.wait_for_model as unknown as boolean
+    });
 
     const response = core.fetch({
         headers: auth,
