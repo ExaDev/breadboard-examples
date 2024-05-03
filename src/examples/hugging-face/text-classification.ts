@@ -85,6 +85,6 @@ const huggingFaceBoardTextClassification = board(() => {
 const inputs = "I like you. I love you"
 
 console.log(
-    JSON.stringify(await huggingFaceBoardTextClassification({ inputs: inputs, apiKey: "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" }), null, 2)
+    JSON.stringify(await huggingFaceBoardTextClassification({ inputs: inputs, apiKey: "myAPiKey" }), null, 2)
 );
 

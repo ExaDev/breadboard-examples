@@ -109,6 +109,6 @@ const source_sentence = "That is a happy person"
 const sentences = ["That is a happy dog", "That is a very happy person", "Today is a sunny day"]
 
 console.log(
-    JSON.stringify(await huggingFaceBoardSentenceSimilarity({ source_sentence: source_sentence, sentences: sentences, apiKey: "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" }), null, 2)
+    JSON.stringify(await huggingFaceBoardSentenceSimilarity({ source_sentence: source_sentence, sentences: sentences, apiKey: "myAPiKey" }), null, 2)
 );
 

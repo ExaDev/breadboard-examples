@@ -113,5 +113,5 @@ const huggingFaceBoardRUToENGTranslation = board(() => {
 const data = "Меня зовут Вольфганг и я живу в Берлине"
 
 console.log(
-    JSON.stringify(await huggingFaceBoardRUToENGTranslation({ inputs: data, apiKey: "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", use_cache: true, wait_for_model: true }), null, 2)
+    JSON.stringify(await huggingFaceBoardRUToENGTranslation({ inputs: data, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
 );

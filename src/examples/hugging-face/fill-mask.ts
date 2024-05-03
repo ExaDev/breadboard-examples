@@ -103,5 +103,5 @@ const huggingFaceBoardFillMask = board(() => {
 const data = "The first president of the USA was called[MASK]."
 
 console.log(
-    JSON.stringify(await huggingFaceBoardFillMask({ inputs: data, apiKey: "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", use_cache: true, wait_for_model: true }), null, 2)
+    JSON.stringify(await huggingFaceBoardFillMask({ inputs: data, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
 );

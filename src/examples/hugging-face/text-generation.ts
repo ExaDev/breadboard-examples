@@ -222,5 +222,5 @@ const huggingFaceBoardTextGeneration = board(() => {
 const data = "The answer to the universe is"
 
 console.log(
-    JSON.stringify(await huggingFaceBoardTextGeneration({ inputs: data, apiKey: "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", use_cache: true, wait_for_model: true }), null, 2)
+    JSON.stringify(await huggingFaceBoardTextGeneration({ inputs: data, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
 );

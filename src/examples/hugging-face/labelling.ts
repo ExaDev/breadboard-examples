@@ -137,5 +137,5 @@ const data = "Hi, I recently bought a device from your company but it is not wor
 const candidate_labels = ["refund", "legal", "faq"]
 
 console.log(
-    JSON.stringify(await huggingFaceBoardTextLabelling({ inputs: data, candidate_labels: candidate_labels, multi_label: false, apiKey: "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", use_cache: true, wait_for_model: true }), null, 2)
+    JSON.stringify(await huggingFaceBoardTextLabelling({ inputs: data, candidate_labels: candidate_labels, multi_label: false, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
 );

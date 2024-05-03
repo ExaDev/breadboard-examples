@@ -110,6 +110,6 @@ const question = "What is my name?"
 const context = "My name is Clara and I live in Berkeley."
 
 console.log(
-    JSON.stringify(await huggingFaceBoardQuestionAnswering({ question: question, context: context, apiKey: "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", use_cache: true, wait_for_model: true }), null, 2)
+    JSON.stringify(await huggingFaceBoardQuestionAnswering({ question: question, context: context, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
 );
 
