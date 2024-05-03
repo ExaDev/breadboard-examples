@@ -35,8 +35,32 @@
 		{
 			"from": "query",
 			"to": "fn-4",
-			"out": "*",
-			"in": ""
+			"out": "inputs",
+			"in": "inputs"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "candidate_labels",
+			"in": "candidate_labels"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "multi_label",
+			"in": "multi_label"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "use_cache",
+			"in": "use_cache"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "wait_for_model",
+			"in": "wait_for_model"
 		}
 	],
 	"nodes": [
