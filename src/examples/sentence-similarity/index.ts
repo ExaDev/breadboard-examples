@@ -24,20 +24,6 @@ const keySchema = {
     description: "The hugging face api key"
 };
 
-const useCacheSchema = {
-    type: "boolean",
-    title: "use_cache",
-    default: "true",
-    description: "Boolean. There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query"
-};
-
-const waitForModelSchema = {
-    type: "boolean",
-    title: "wait_for_model",
-    default: "false",
-    description: " Boolean. If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places"
-};
-
 export type HuggingFaceSentenceSimilarityRawParams = {
     source_sentence: string
     sentences: string[]
@@ -50,10 +36,6 @@ export type HuggingFaceSentenceSimilarityParams = {
     inputs: {
         source_sentence: string
         sentences: string[]
-    },
-    options: {
-        use_cache: boolean,
-        wait_for_model: boolean
     }
 };
 
@@ -64,20 +46,17 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ source_sentence: string, sentences: string[], use_cache: boolean, wait_for_model: boolean }>((input) => {
-    const { source_sentence, sentences, use_cache, wait_for_model } = input
+const handleParams = code<{ source_sentence: string, sentences: string[]}>((input) => {
+    const { source_sentence, sentences } = input
 
     const payload: HuggingFaceSentenceSimilarityParams = {
         "inputs": {
             source_sentence: source_sentence,
-            sentences: sentences,
+            sentences: sentences
         },
-        "options":
-        {
-            use_cache: use_cache,
-            wait_for_model: wait_for_model
-        }
     };
+
+    console.log("payload", payload)
 
     return { payload }
 });
@@ -91,8 +70,6 @@ const serialized = await board(() => {
                 source_sentence: soruceSentenceSchema,
                 sentences: sentencesSchema,
                 apiKey: keySchema,
-                use_cache: useCacheSchema,
-                wait_for_model: waitForModelSchema
             },
         },
         type: "string",
@@ -105,8 +82,6 @@ const serialized = await board(() => {
     const { payload } = handleParams({
         source_sentence: inputs.source_sentence as unknown as string,
         sentences: inputs.sentences as unknown as string[],
-        use_cache: inputs.use_cache as unknown as boolean,
-        wait_for_model: inputs.wait_for_model as unknown as boolean
     });
 
     const response = core.fetch({
@@ -127,4 +102,3 @@ fs.writeFileSync(
     path.join(".", "board.json"),
     JSON.stringify(serialized, null, "\t")
 );
-
