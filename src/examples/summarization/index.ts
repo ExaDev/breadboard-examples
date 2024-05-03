@@ -1,12 +1,13 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types.js";
+import path from "path";
+import fs from "fs";
 
-const dataSchema = {
+const inputsSchema = {
     type: "string",
-    title: "data",
-    default: "The answer to the universe is",
-    description: "The data to send to the hugging face api"
+    title: "inputs",
+    default: "data",
+    description: "The tower is 324 metres (1,063 ft) tall, about the same height as an 81-storey building, and the tallest structure in Paris. Its base is square, measuring 125 metres (410 ft) on each side. During its construction, the Eiffel Tower surpassed the Washington Monument to become the tallest man-made structure in the world, a title it held for 41 years until the Chrysler Building in New York City was finished in 1930. It was the first structure to reach a height of 300 metres. Due to the addition of a broadcasting aerial at the top of the tower in 1957, it is now taller than the Chrysler Building by 5.2 metres (17 ft). Excluding transmitters, the Eiffel Tower is the second tallest free-standing structure in France after the Millau Viaduct."
 };
 
 const keySchema = {
@@ -14,6 +15,20 @@ const keySchema = {
     title: "apiKey",
     default: "myKey",
     description: "The hugging face api key"
+};
+
+const minLengthSchema = {
+    type: "string",
+    title: "number",
+    default: "None",
+    description: "Integer to define the minimum length in tokens of the output summary"
+};
+
+const maxLengthSchema = {
+    type: "number",
+    title: "max_length",
+    default: "None",
+    description: "Integer to define the maximum length in tokens of the output summary"
 };
 
 const topKSchema = {
@@ -44,38 +59,11 @@ const repetitionPenaltySchema = {
     description: "The more a token is used within generation the more it is penalized to not be picked in successive generation passes"
 };
 
-const maxNewTokensSchema = {
-    type: "number",
-    title: "max_tokens",
-    default: "None",
-    description: "The amount of new tokens to be generated, this does not include the input length it is a estimate of the size of generated text you want. Each new tokens slows down the request, so look for balance between response times and length of text generated"
-};
-
 const maxTimeSchema = {
     type: "number",
     title: "max_time",
     default: "None",
-    description: "The amount of time in seconds that the query should take maximum. Network can cause some overhead so it will be a soft limit. Use that in combination with max_new_tokens for best results"
-};
-
-const returnFullTextSchema = {
-    type: "boolean",
-    title: "return_full_text",
-    default: "true",
-    description: "Bool. If set to False, the return results will not contain the original query making it easier for prompting"
-};
-
-const numReturnSequencesSchema = {
-    type: "number",
-    title: "num_return_sequences",
-    default: "1",
-};
-
-const doSampleSchema = {
-    type: "boolean",
-    title: "do_sample",
-    default: "true",
-    description: "Bool. Whether or not to use sampling, use greedy decoding otherwise"
+    description: "The amount of time in seconds that the query should take maximum. Network can cause some overhead so it will be a soft limit"
 };
 
 const useCacheSchema = {
@@ -92,34 +80,28 @@ const waitForModelSchema = {
     description: " Boolean. If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places"
 };
 
-export type HuggingFaceTextGenerationRawParams = {
+
+export type HuggingFaceSummarizationRawParams = {
     inputs: string
+    min_length: number;
+    max_length: number;
     top_k: number;
     top_p: number;
     temperature: number;
     repetition_penalty: number;
-    max_new_tokens: number;
     max_time: number;
-    return_full_text: boolean;
-    num_return_sequences: number;
-    do_sample: boolean
-
-    use_cache: boolean
-    wait_for_model: boolean
 };
 
-export type HuggingFaceTextGenerationParams = {
+export type HuggingFaceSummarizationParams = {
     inputs: string
     parameters: {
+        min_length: number;
+        max_length: number;
         top_k: number;
         top_p: number;
         temperature: number;
         repetition_penalty: number;
-        max_new_tokens: number;
         max_time: number;
-        return_full_text: boolean;
-        num_return_sequences: number;
-        do_sample: boolean
 
         options: {
             use_cache: boolean
@@ -128,7 +110,6 @@ export type HuggingFaceTextGenerationParams = {
     }
 };
 
-
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key
     const auth = { Authorization: `Bearer ${key}` }
@@ -136,63 +117,39 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingFaceTextGenerationRawParams }>((input) => {
-    const {
-        inputs,
-        top_k,
-        top_p,
-        temperature,
-        repetition_penalty,
-        max_new_tokens,
-        max_time,
-        return_full_text,
-        num_return_sequences,
-        do_sample,
-        use_cache,
-        wait_for_model
-    } = input
-
-    const request: HuggingFaceTextGenerationParams = {
+const handleParams = code<{ inputs: string, min_length: number, max_length: number, top_k: number, top_p: number, temperature: number, repetition_penalty: number, max_time: number }>((input) => {
+    const { inputs, min_length, max_length, top_k, top_p, temperature, repetition_penalty, max_time } = input
+    const request: HuggingFaceSummarizationParams = {
         inputs: inputs,
         parameters: {
-            top_k: top_k,
-            top_p: top_p,
-            temperature: temperature,
-            repetition_penalty: repetition_penalty,
-            max_new_tokens: max_new_tokens,
-            max_time: max_time,
-            return_full_text: return_full_text,
-            num_return_sequences: num_return_sequences,
-            do_sample: do_sample,
+            min_length: min_length, max_length: max_length, top_k: top_k, top_p: top_p, temperature: temperature, repetition_penalty: repetition_penalty, max_time: max_time,
             options: {
-                use_cache: use_cache,
-                wait_for_model: wait_for_model
+                use_cache: false,
+                wait_for_model: false
             }
         }
-    }
+    };
 
-    const payload = JSON.stringify(request)
+    const payload = JSON.stringify(request);
 
     return { payload }
-})
+});
 
-const huggingFaceBoardTextGeneration = board(() => {
+const serialized = await board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
-            title: "Hugging Face Schema For Text Generation",
+            title: "Hugging Face Schema For Summarization",
             properties: {
-                inputs: dataSchema,
+                inputs: inputsSchema,
                 apiKey: keySchema,
+                min_length: minLengthSchema,
+                max_length: maxLengthSchema,
                 top_k: topKSchema,
                 top_p: topPSchema,
                 temperature: temperatureSchema,
                 repetition_penalty: repetitionPenaltySchema,
-                max_new_tokens: maxNewTokensSchema,
                 max_time: maxTimeSchema,
-                return_full_text: returnFullTextSchema,
-                num_return_sequences: numReturnSequencesSchema,
-                do_sample: doSampleSchema,
                 use_cache: useCacheSchema,
                 wait_for_model: waitForModelSchema
             },
@@ -200,11 +157,10 @@ const huggingFaceBoardTextGeneration = board(() => {
         type: "string",
     });
 
-    const task = HuggingFaceTask.summarization
+    const task = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
     const output = base.output({ $id: "main" });
 
-    const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
-
+    const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
     const { payload } = handleParams(inputs);
 
     const response = core.fetch({
@@ -214,13 +170,15 @@ const huggingFaceBoardTextGeneration = board(() => {
         url: task
     });
 
-    response.to(output);
+    response.to(output)
 
     return { output }
-})
+}).serialize({
+    title: "Hugging Face Summarization Board",
+    description: "Board which calls the Hugging Face Summarization Endpoint"
+});
 
-const data = "The answer to the universe is"
-
-console.log(
-    JSON.stringify(await huggingFaceBoardTextGeneration({ inputs: data, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
+fs.writeFileSync(
+    path.join(".", "board.json"),
+    JSON.stringify(serialized, null, "\t")
 );

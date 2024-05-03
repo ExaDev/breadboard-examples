@@ -1,0 +1,247 @@
+{
+	"title": "Hugging Face Text Generation Board",
+	"description": "Board which calls the Hugging Face Text Generation Endpoint",
+	"edges": [
+		{
+			"from": "main",
+			"to": "output-2",
+			"out": "output",
+			"in": "output"
+		},
+		{
+			"from": "fetch-5",
+			"to": "main",
+			"out": "*",
+			"in": ""
+		},
+		{
+			"from": "fn-3",
+			"to": "fetch-5",
+			"out": "auth",
+			"in": "headers"
+		},
+		{
+			"from": "fn-4",
+			"to": "fetch-5",
+			"out": "payload",
+			"in": "body"
+		},
+		{
+			"from": "query",
+			"to": "fn-3",
+			"out": "apiKey",
+			"in": "key"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "*",
+			"in": ""
+		}
+	],
+	"nodes": [
+		{
+			"id": "output-2",
+			"type": "output",
+			"configuration": {
+				"schema": {
+					"type": "object",
+					"properties": {
+						"output": {
+							"type": "string",
+							"title": "output"
+						}
+					}
+				}
+			}
+		},
+		{
+			"id": "main",
+			"type": "output",
+			"configuration": {}
+		},
+		{
+			"id": "fetch-5",
+			"type": "fetch",
+			"configuration": {
+				"method": "POST",
+				"url": "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+			}
+		},
+		{
+			"id": "fn-3",
+			"type": "invoke",
+			"configuration": {
+				"$board": "#fn-3"
+			}
+		},
+		{
+			"id": "fn-4",
+			"type": "invoke",
+			"configuration": {
+				"$board": "#fn-4"
+			}
+		},
+		{
+			"id": "query",
+			"type": "input",
+			"configuration": {
+				"schema": {
+					"title": "Hugging Face Schema For Text Generation",
+					"properties": {
+						"inputs": {
+							"type": "string",
+							"title": "data",
+							"default": "The answer to the universe is",
+							"description": "The data to send to the hugging face api"
+						},
+						"apiKey": {
+							"type": "string",
+							"title": "apiKey",
+							"default": "myKey",
+							"description": "The hugging face api key"
+						},
+						"top_k": {
+							"type": "number",
+							"title": "top_k",
+							"default": "None",
+							"description": "Integer to define the top tokens considered within the sample operation to create new text"
+						},
+						"top_p": {
+							"type": "number",
+							"title": "top_P",
+							"default": "None",
+							"description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top_p"
+						},
+						"temperature": {
+							"type": "number",
+							"title": "temperature",
+							"default": "1.0",
+							"description": "The temperature of the sampling operation. 1 means regular sampling, 0 means always take the highest score, 100.0 is getting closer to uniform probability"
+						},
+						"repetition_penalty": {
+							"type": "number",
+							"title": "repetition_penalty",
+							"default": "1.0",
+							"description": "The more a token is used within generation the more it is penalized to not be picked in successive generation passes"
+						},
+						"max_new_tokens": {
+							"type": "number",
+							"title": "max_tokens",
+							"default": "None",
+							"description": "The amount of new tokens to be generated, this does not include the input length it is a estimate of the size of generated text you want. Each new tokens slows down the request, so look for balance between response times and length of text generated"
+						},
+						"max_time": {
+							"type": "number",
+							"title": "max_time",
+							"default": "None",
+							"description": "The amount of time in seconds that the query should take maximum. Network can cause some overhead so it will be a soft limit. Use that in combination with max_new_tokens for best results"
+						},
+						"return_full_text": {
+							"type": "boolean",
+							"title": "return_full_text",
+							"default": "true",
+							"description": "Bool. If set to False, the return results will not contain the original query making it easier for prompting"
+						},
+						"num_return_sequences": {
+							"type": "number",
+							"title": "num_return_sequences",
+							"default": "1"
+						},
+						"do_sample": {
+							"type": "boolean",
+							"title": "do_sample",
+							"default": "true",
+							"description": "Bool. Whether or not to use sampling, use greedy decoding otherwise"
+						},
+						"use_cache": {
+							"type": "boolean",
+							"title": "use_cache",
+							"default": "true",
+							"description": "Boolean. There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query"
+						},
+						"wait_for_model": {
+							"type": "boolean",
+							"title": "wait_for_model",
+							"default": "false",
+							"description": " Boolean. If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places"
+						}
+					}
+				},
+				"type": "string"
+			}
+		}
+	],
+	"graphs": {
+		"fn-3": {
+			"edges": [
+				{
+					"from": "fn-3-input",
+					"to": "fn-3-run",
+					"out": "*"
+				},
+				{
+					"from": "fn-3-run",
+					"to": "fn-3-output",
+					"out": "*"
+				}
+			],
+			"nodes": [
+				{
+					"id": "fn-3-input",
+					"type": "input",
+					"configuration": {}
+				},
+				{
+					"id": "fn-3-run",
+					"type": "runJavascript",
+					"configuration": {
+						"code": "function fn_3(inputs) {const key=inputs.key;const auth={Authorization:`Bearer ${key}`};return{auth}}",
+						"name": "fn_3",
+						"raw": true
+					}
+				},
+				{
+					"id": "fn-3-output",
+					"type": "output",
+					"configuration": {}
+				}
+			]
+		},
+		"fn-4": {
+			"edges": [
+				{
+					"from": "fn-4-input",
+					"to": "fn-4-run",
+					"out": "*"
+				},
+				{
+					"from": "fn-4-run",
+					"to": "fn-4-output",
+					"out": "*"
+				}
+			],
+			"nodes": [
+				{
+					"id": "fn-4-input",
+					"type": "input",
+					"configuration": {}
+				},
+				{
+					"id": "fn-4-run",
+					"type": "runJavascript",
+					"configuration": {
+						"code": "function fn_4(input) {const{inputs,top_k,top_p,temperature,repetition_penalty,max_new_tokens,max_time,return_full_text,num_return_sequences,do_sample,use_cache,wait_for_model}=input;const request={inputs,parameters:{top_k,top_p,temperature,repetition_penalty,max_new_tokens,max_time,return_full_text,num_return_sequences,do_sample,options:{use_cache,wait_for_model}}};const payload=JSON.stringify(request);return{payload}}",
+						"name": "fn_4",
+						"raw": true
+					}
+				},
+				{
+					"id": "fn-4-output",
+					"type": "output",
+					"configuration": {}
+				}
+			]
+		}
+	}
+}

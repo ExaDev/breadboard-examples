@@ -102,7 +102,7 @@ const serialized = await board(() => {
 }).serialize({
     title: "Hugging Face Fill Mask",
     description: "Board which calls the Hugging Face Fill Mask Endpoint"
-})
+});
 
 
 fs.writeFileSync(

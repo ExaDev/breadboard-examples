@@ -1,12 +1,13 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types.js";
+import path from "path";
+import fs from "fs"
 
 const inputsSchema = {
     type: "string",
-    title: "data",
-    default: "Меня зовут Вольфганг и я живу в Берлине",
-    description: "The data to send to the Hugging Face api Translation API (Russian To English)"
+    title: "inputs",
+    default: "Hi, I recently bought a device from your company but it is not working as advertised and I would like to get reimbursed!",
+    description: "The data to send to the hugging face api labelling endpoint"
 };
 
 const keySchema = {
@@ -14,6 +15,20 @@ const keySchema = {
     title: "apiKey",
     default: "myKey",
     description: "The hugging face api key"
+};
+
+const candidateLabelsSchema = {
+    type: "list",
+    title: "candidate_lebels",
+    default: "[refund, legal, faq]",
+    description: "The labels to mark the input"
+};
+
+const multiLabelSchema = {
+    type: "boolean",
+    title: "multi_label",
+    default: "true",
+    description: "Flag to indicate if multi labels are allowed"
 };
 
 const useCacheSchema = {
@@ -31,40 +46,48 @@ const waitForModelSchema = {
 };
 
 
-export type HuggingFaceTranslationRawParams = {
-    inputs: string
-    use_cache: boolean
-    wait_for_model: boolean
+export type HuggingFaceLabellingRawParams = {
+    inputs: string;
+    candidate_labels: string[];
+    multi_label: boolean;
+    use_cache: boolean;
+    wait_for_model: boolean;
 };
 
-export type HuggingFaceTranslationParams = {
-    inputs: string
+export type HuggingFaceLabellingParams = {
+    inputs: string;
     parameters: {
+        candidate_labels: string[];
+        multi_label: boolean;
+
         options: {
-            use_cache: boolean
-            wait_for_model: boolean
+            use_cache: boolean;
+            wait_for_model: boolean;
         }
     }
 };
 
-
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key
-    const auth = { Authorization: `Bearer ${key}` };
+    const auth = { Authorization: `Bearer ${key}` }
 
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingFaceTranslationRawParams }>((input) => {
+const handleParams = code<{ inputs: string, candidate_labels: string[], multi_label: boolean, use_cache: boolean, wait_for_model: boolean }>((input) => {
     const {
         inputs,
+        candidate_labels,
+        multi_label,
         use_cache,
         wait_for_model
     } = input
 
-    const request: HuggingFaceTranslationParams = {
+    const payload: HuggingFaceLabellingParams = {
         inputs: inputs,
         parameters: {
+            candidate_labels: candidate_labels,
+            multi_label: multi_label,
             options: {
                 use_cache: use_cache,
                 wait_for_model: wait_for_model
@@ -72,19 +95,19 @@ const handleParams = code<{ input: HuggingFaceTranslationRawParams }>((input) =>
         }
     };
 
-    const payload = JSON.stringify(request);
-
-    return { payload };
+    return { payload }
 });
 
-const huggingFaceBoardRUToENGTranslation = board(() => {
+const serialized = await board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
-            title: "Hugging Face Schema For RUSSIAN TO ENGLISH TRANSLATION",
+            title: "Hugging Face Schema For text labelling",
             properties: {
                 inputs: inputsSchema,
                 apiKey: keySchema,
+                candidate_labels: candidateLabelsSchema,
+                multi_label: multiLabelSchema,
                 use_cache: useCacheSchema,
                 wait_for_model: waitForModelSchema
             },
@@ -92,7 +115,7 @@ const huggingFaceBoardRUToENGTranslation = board(() => {
         type: "string",
     });
 
-    const task = HuggingFaceTask.translation
+    const task = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli"
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
@@ -108,10 +131,12 @@ const huggingFaceBoardRUToENGTranslation = board(() => {
     response.to(output);
 
     return { output }
-})
+}).serialize({
+    title: "Hugging Face Labelling Board",
+    description: "Board which calls the Hugging Face Labelling Endpoint"
+});
 
-const data = "Меня зовут Вольфганг и я живу в Берлине"
-
-console.log(
-    JSON.stringify(await huggingFaceBoardRUToENGTranslation({ inputs: data, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
+fs.writeFileSync(
+    path.join(".", "board.json"),
+    JSON.stringify(serialized, null, "\t")
 );

@@ -1,12 +1,20 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types.js";
+import path from "path";
+import fs from "fs";
 
-const inputsSchema = {
+const soruceSentenceSchema = {
     type: "string",
     title: "inputs",
-    default: "I like you. I love you",
-    description: "The data to send to the hugging face api text classification endpoint"
+    default: "That is a happy person",
+    description: "The data to send to the hugging face api sentence similarity endpoint"
+};
+
+const sentencesSchema = {
+    type: "string",
+    title: "inputs",
+    default: "[That is a happy dog, That is a very happy person,Today is a sunny day]",
+    description: "A list of sentences to compare the source sentence to"
 };
 
 const keySchema = {
@@ -30,33 +38,49 @@ const waitForModelSchema = {
     description: " Boolean. If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places"
 };
 
-export type HuggingFaceTextClassificationRawParams = {
-    inputs: string
+export type HuggingFaceSentenceSimilarityRawParams = {
+    source_sentence: string
+    sentences: string[]
+
+    use_cache: boolean
+    wait_for_model: boolean
+};
+
+export type HuggingFaceSentenceSimilarityParams = {
+    inputs: {
+        source_sentence: string
+        sentences: string[]
+    }
 };
 
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key
-    const auth = { Authorization: `Bearer ${key}` };
+    const auth = { Authorization: `Bearer ${key}` }
 
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingFaceTextClassificationRawParams }>((input) => {
-    const { inputs } = input
+const handleParams = code<{ source_sentence: string, sentences: string[] }>((input) => {
+    const { source_sentence, sentences } = input
 
-    const request: HuggingFaceTextClassificationRawParams = { inputs: inputs };
-    const payload = JSON.stringify(request);
+    const payload: HuggingFaceSentenceSimilarityParams = {
+        "inputs": {
+            source_sentence: source_sentence,
+            sentences: sentences,
+        }
+    };
 
     return { payload }
-})
+});
 
-const huggingFaceBoardTextClassification = board(() => {
+const serialized = await board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
-            title: "Hugging Face Schema For Text Classification",
+            title: "Hugging Face Schema For Sentence Similarity",
             properties: {
-                inputs: inputsSchema,
+                soruce_sentence: soruceSentenceSchema,
+                sentences: sentencesSchema,
                 apiKey: keySchema,
                 use_cache: useCacheSchema,
                 wait_for_model: waitForModelSchema
@@ -65,10 +89,10 @@ const huggingFaceBoardTextClassification = board(() => {
         type: "string",
     });
 
-    const task = HuggingFaceTask.textClassification
+    const task = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
     const output = base.output({ $id: "main" });
 
-    const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
+    const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
     const { payload } = handleParams(inputs);
 
     const response = core.fetch({
@@ -80,11 +104,13 @@ const huggingFaceBoardTextClassification = board(() => {
 
     response.to(output);
     return { output }
+}).serialize({
+    title: "Hugging Face Sentence Similarity Board",
+    description: "Board which calls the Hugging Face Sentence Similarity Endpoint"
 });
 
-const inputs = "I like you. I love you"
-
-console.log(
-    JSON.stringify(await huggingFaceBoardTextClassification({ inputs: inputs, apiKey: "myAPiKey" }), null, 2)
+fs.writeFileSync(
+    path.join(".", "board.json"),
+    JSON.stringify(serialized, null, "\t")
 );
 

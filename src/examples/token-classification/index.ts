@@ -1,6 +1,7 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types.js";
+import path from "path";
+import fs from "fs"
 
 const inputsSchema = {
     type: "string",
@@ -70,7 +71,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingFaceTokenClassificationRawParams }>((input) => {
+const handleParams = code<{ inputs: string, aggregation_strategy: "simple" | "first" | "average", use_cache: boolean, wait_for_model:boolean }>((input) => {
     const {
         inputs,
         aggregation_strategy,
@@ -94,7 +95,7 @@ const handleParams = code<{ input: HuggingFaceTokenClassificationRawParams }>((i
     return { payload }
 });
 
-const huggingFaceBoardTokenClassification = board(() => {
+const serialized = await board(() => {
     const inputs = base.input({
         $id: "token-classification-params",
         schema: {
@@ -111,7 +112,7 @@ const huggingFaceBoardTokenClassification = board(() => {
         type: "string",
     });
 
-    const task = HuggingFaceTask.tokenClassification
+    const task = "https://api-inference.huggingface.co/models/ml6team/keyphrase-extraction-kbir-inspec"
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
@@ -127,10 +128,12 @@ const huggingFaceBoardTokenClassification = board(() => {
     response.to(output);
 
     return { output }
+}).serialize({
+    title: "Hugging Face Token Classification Board",
+    description: "Board which calls the Hugging Face Token Classification Endpoint"
 });
 
-const data = "In this work, we explore how to learn task specific language models aimed towards learning rich representation of keyphrases from text documents. We experiment with different masking strategies for pre-training transformer language models (LMs) in discriminative as well as generative settings. In the discriminative setting, we introduce a new pre-training objective - Keyphrase Boundary Infilling with Replacement (KBIR), showing large gains in performance (up to 9.26 points in F1) over SOTA, when LM pre-trained using KBIR is fine-tuned for the task of keyphrase extraction. In the generative setting, we introduce a new pre-training setup for BART - KeyBART, that reproduces the keyphrases related to the input text in the CatSeq format, instead of the denoised original input. This also led to gains in performance (up to 4.33 points inF1@M) over SOTA for keyphrase generation. Additionally, we also fine-tune the pre-trained language models on named entity recognition(NER), question answering (QA), relation extraction (RE), abstractive summarization and achieve comparable performance with that of the SOTA, showing that learning rich representation of keyphrases is indeed beneficial for many other fundamental NLP task"
-
-console.log(
-    JSON.stringify(await huggingFaceBoardTokenClassification({ inputs: data, aggregation_strategy: "simple", apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
+fs.writeFileSync(
+    path.join(".", "board.json"),
+    JSON.stringify(serialized, null, "\t")
 );

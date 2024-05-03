@@ -1,6 +1,7 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "./types.js";
+import path from "path";
+import fs from "fs";
 
 const questionSchema = {
     type: "string",
@@ -60,7 +61,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ input: HuggingQuestionAnsweringRawParams }>((input) => {
+const handleParams = code<{ question: string, context: string }>((input) => {
     const { question, context, } = input
 
     const payload: HuggingQuestionAnsweringParams = {
@@ -73,7 +74,7 @@ const handleParams = code<{ input: HuggingQuestionAnsweringRawParams }>((input) 
     return { payload }
 });
 
-const huggingFaceBoardQuestionAnswering = board(() => {
+const serialized = await  board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
@@ -89,7 +90,7 @@ const huggingFaceBoardQuestionAnswering = board(() => {
         type: "string",
     });
 
-    const task = HuggingFaceTask.questionAnswering
+    const task = "https://api-inference.huggingface.co/models/deepset/roberta-base-squad2"
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
@@ -104,12 +105,12 @@ const huggingFaceBoardQuestionAnswering = board(() => {
 
     response.to(output);
     return { output }
+}).serialize({
+    title: "Hugging Face Question Answering Board",
+    description: "Board which calls the Hugging Face Question Answering Endpoint"
 });
 
-const question = "What is my name?"
-const context = "My name is Clara and I live in Berkeley."
-
-console.log(
-    JSON.stringify(await huggingFaceBoardQuestionAnswering({ question: question, context: context, apiKey: "myAPiKey", use_cache: true, wait_for_model: true }), null, 2)
+fs.writeFileSync(
+    path.join(".", "board.json"),
+    JSON.stringify(serialized, null, "\t")
 );
-
