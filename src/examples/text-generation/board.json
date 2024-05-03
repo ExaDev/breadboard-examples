@@ -41,18 +41,6 @@
 		{
 			"from": "query",
 			"to": "fn-4",
-			"out": "top_k",
-			"in": "top_k"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "top_p",
-			"in": "top_p"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
 			"out": "max_length",
 			"in": "max_length"
 		},
@@ -124,18 +112,6 @@
 							"title": "apiKey",
 							"default": "myKey",
 							"description": "The hugging face api key"
-						},
-						"top_k": {
-							"type": "number",
-							"title": "top_k",
-							"default": "None",
-							"description": "Integer to define the top tokens considered within the sample operation to create new text"
-						},
-						"top_p": {
-							"type": "number",
-							"title": "top_P",
-							"default": "None",
-							"description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top_p"
 						},
 						"max_length": {
 							"type": "number",
@@ -214,7 +190,7 @@
 					"id": "fn-4-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_4(input) {const{inputs,top_k,top_p,max_length,num_return_sequences}=input;const payload={inputs,parameters:{top_k,top_p,max_length,num_return_sequences}};return{payload}}",
+						"code": "function fn_4(input) {const{inputs,max_length,num_return_sequences}=input;const payload={inputs,parameters:{max_length,num_return_sequences}};return{payload}}",
 						"name": "fn_4",
 						"raw": true
 					}

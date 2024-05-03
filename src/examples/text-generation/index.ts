@@ -17,20 +17,6 @@ const keySchema = {
     description: "The hugging face api key"
 };
 
-const topKSchema = {
-    type: "number",
-    title: "top_k",
-    default: "None",
-    description: "Integer to define the top tokens considered within the sample operation to create new text"
-};
-
-const topPSchema = {
-    type: "number",
-    title: "top_P",
-    default: "None",
-    description: "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top_p"
-};
-
 const maxLengthSchema = {
     type: "number",
     title: "max_length",
@@ -57,8 +43,6 @@ export type HuggingFaceTextGenerationRawParams = {
 export type HuggingFaceTextGenerationParams = {
     inputs: string
     parameters: {
-        top_k: number;
-        top_p: number;
         max_length: number;
         num_return_sequences: number;
     }
@@ -74,8 +58,6 @@ const authenticate = code<{ key: string }>((inputs) => {
 const handleParams = code<{ inputs: string, top_k: number, top_p: number, max_length: number, num_return_sequences: number}>((input) => {
     const {
         inputs,
-        top_k,
-        top_p,
         max_length,
         num_return_sequences
     } = input
@@ -83,8 +65,6 @@ const handleParams = code<{ inputs: string, top_k: number, top_p: number, max_le
     const payload: HuggingFaceTextGenerationParams = {
         inputs: inputs,
         parameters: {
-            top_k: top_k,
-            top_p: top_p,
             max_length: max_length,
             num_return_sequences: num_return_sequences
         }
@@ -101,8 +81,6 @@ const serialized = await board(() => {
             properties: {
                 inputs: dataSchema,
                 apiKey: keySchema,
-                top_k: topKSchema,
-                top_p: topPSchema,
                 max_length: maxLengthSchema,
                 num_return_sequences: numReturnSequencesSchema
             },
@@ -116,8 +94,6 @@ const serialized = await board(() => {
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
     const { payload } = handleParams({
         inputs: inputs.inputs as unknown as string,
-        top_k: inputs.top_k as unknown as number,
-        top_p: inputs.top_p as unknown as number,
         max_length: inputs.max_length as unknown as number,
         num_return_sequences: inputs.num_return_sequences as unknown as number
     });
