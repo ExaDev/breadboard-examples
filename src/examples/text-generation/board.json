@@ -35,8 +35,74 @@
 		{
 			"from": "query",
 			"to": "fn-4",
-			"out": "*",
-			"in": ""
+			"out": "inputs",
+			"in": "inputs"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "top_k",
+			"in": "top_k"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "top_p",
+			"in": "top_p"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "temperature",
+			"in": "temperature"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "repetition_penalty",
+			"in": "repetition_penalty"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "max_new_tokens",
+			"in": "max_new_tokens"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "max_time",
+			"in": "max_time"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "return_full_text",
+			"in": "return_full_text"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "num_return_sequences",
+			"in": "num_return_sequences"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "do_sample",
+			"in": "do_sample"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "use_cache",
+			"in": "use_cache"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "wait_for_model",
+			"in": "wait_for_model"
 		}
 	],
 	"nodes": [

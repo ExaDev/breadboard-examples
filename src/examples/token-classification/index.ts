@@ -71,7 +71,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ inputs: string, aggregation_strategy: "simple" | "first" | "average", use_cache: boolean, wait_for_model:boolean }>((input) => {
+const handleParams = code<{ inputs: string, aggregation_strategy: "simple" | "first" | "average", use_cache: boolean, wait_for_model: boolean }>((input) => {
     const {
         inputs,
         aggregation_strategy,
@@ -116,7 +116,12 @@ const serialized = await board(() => {
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
-    const { payload } = handleParams(inputs);
+    const { payload } = handleParams({
+        inputs: inputs.inputs as unknown as string,
+        aggregation_strategy: inputs.aggregation_strategy as unknown as "simple" | "first" | "average",
+        use_cache: inputs.use_cache as unknown as boolean,
+        wait_for_model: inputs.wait_for_model as unknown as boolean
+    });
 
     const response = core.fetch({
         headers: auth,

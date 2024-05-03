@@ -60,7 +60,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ source_sentence: string, sentences: string[] }>((input) => {
+const handleParams = code<{ source_sentence: string, sentences: string[]}>((input) => {
     const { source_sentence, sentences } = input
 
     const payload: HuggingFaceSentenceSimilarityParams = {
@@ -79,11 +79,11 @@ const serialized = await board(() => {
         schema: {
             title: "Hugging Face Schema For Sentence Similarity",
             properties: {
-                soruce_sentence: soruceSentenceSchema,
+                source_sentence: soruceSentenceSchema,
                 sentences: sentencesSchema,
                 apiKey: keySchema,
-                use_cache: useCacheSchema,
-                wait_for_model: waitForModelSchema
+                // use_cache: useCacheSchema,
+                // wait_for_model: waitForModelSchema
             },
         },
         type: "string",
@@ -93,7 +93,7 @@ const serialized = await board(() => {
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
-    const { payload } = handleParams(inputs);
+    const { payload } = handleParams({source_sentence: inputs.source_sentence as unknown as string, sentences: inputs.sentences as unknown as string[]});
 
     const response = core.fetch({
         headers: auth,

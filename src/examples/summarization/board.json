@@ -35,8 +35,50 @@
 		{
 			"from": "query",
 			"to": "fn-4",
-			"out": "*",
-			"in": ""
+			"out": "inputs",
+			"in": "inputs"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "min_length",
+			"in": "min_length"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "max_length",
+			"in": "max_length"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "top_k",
+			"in": "top_k"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "top_p",
+			"in": "top_p"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "temperature",
+			"in": "temperature"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "repetition",
+			"in": "repetition_penalty"
+		},
+		{
+			"from": "query",
+			"to": "fn-4",
+			"out": "max_time",
+			"in": "max_time"
 		}
 	],
 	"nodes": [

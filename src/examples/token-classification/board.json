@@ -35,8 +35,26 @@
 		{
 			"from": "token-classification-params",
 			"to": "fn-4",
-			"out": "*",
-			"in": ""
+			"out": "inputs",
+			"in": "inputs"
+		},
+		{
+			"from": "token-classification-params",
+			"to": "fn-4",
+			"out": "aggregation_strategy",
+			"in": "aggregation_strategy"
+		},
+		{
+			"from": "token-classification-params",
+			"to": "fn-4",
+			"out": "use_cache",
+			"in": "use_cache"
+		},
+		{
+			"from": "token-classification-params",
+			"to": "fn-4",
+			"out": "wait_for_model",
+			"in": "wait_for_model"
 		}
 	],
 	"nodes": [

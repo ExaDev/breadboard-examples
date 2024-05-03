@@ -83,8 +83,6 @@ const serialized = await  board(() => {
                 question: questionSchema,
                 apiKey: keySchema,
                 context: contextSchema,
-                use_cache: useCacheSchema,
-                wait_for_model: waitForModelSchema
             },
         },
         type: "string",
@@ -94,7 +92,7 @@ const serialized = await  board(() => {
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
-    const { payload } = handleParams(inputs);
+    const { payload } = handleParams({question: inputs.question as unknown as string, context: inputs.context as unknown as string});
 
     const response = core.fetch({
         headers: auth,
