@@ -52,7 +52,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ inputs: string, use_cache:boolean, wait_for_model: boolean }>((input) => {
+const handleParams = code<{ inputs: string, use_cache: boolean, wait_for_model: boolean }>((input) => {
     const { inputs, use_cache, wait_for_model } = input
 
     const request: HuggingFaceFillMaskParams = {
@@ -87,7 +87,7 @@ const serialized = await board(() => {
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
-    const { payload } = handleParams({inputs: inputs.inputs as unknown as string, use_cache:inputs.use_cache as unknown as boolean, wait_for_model: inputs.wait_for_model as unknown as boolean });
+    const { payload } = handleParams({ inputs: inputs.inputs as unknown as string, use_cache: inputs.use_cache as unknown as boolean, wait_for_model: inputs.wait_for_model as unknown as boolean });
 
     const response = core.fetch({
         headers: auth,
@@ -106,6 +106,6 @@ const serialized = await board(() => {
 
 
 fs.writeFileSync(
-	path.join(".", "board.json"),
-	JSON.stringify(serialized, null, "\t")
+    path.join(".", "board.json"),
+    JSON.stringify(serialized, null, "\t")
 );

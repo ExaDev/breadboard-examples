@@ -46,7 +46,7 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ source_sentence: string, sentences: string[]}>((input) => {
+const handleParams = code<{ source_sentence: string, sentences: string[] }>((input) => {
     const { source_sentence, sentences } = input
 
     const payload: HuggingFaceSentenceSimilarityParams = {

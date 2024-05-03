@@ -1,6 +1,5 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-import { HuggingFaceTask } from "../hugging-face/types.js";
 import path from "path";
 import fs from "fs";
 
@@ -202,7 +201,7 @@ const serialized = await board(() => {
         type: "string",
     });
 
-    const task = HuggingFaceTask.summarization
+    const task = "https://api-inference.huggingface.co/models/gpt2"
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })

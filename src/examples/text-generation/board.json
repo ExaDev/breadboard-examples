@@ -131,7 +131,7 @@
 			"type": "fetch",
 			"configuration": {
 				"method": "POST",
-				"url": "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+				"url": "https://api-inference.huggingface.co/models/gpt2"
 			}
 		},
 		{

@@ -74,7 +74,7 @@ const handleParams = code<{ question: string, context: string }>((input) => {
     return { payload }
 });
 
-const serialized = await  board(() => {
+const serialized = await board(() => {
     const inputs = base.input({
         $id: "query",
         schema: {
@@ -92,7 +92,7 @@ const serialized = await  board(() => {
     const output = base.output({ $id: "main" });
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
-    const { payload } = handleParams({question: inputs.question as unknown as string, context: inputs.context as unknown as string});
+    const { payload } = handleParams({ question: inputs.question as unknown as string, context: inputs.context as unknown as string });
 
     const response = core.fetch({
         headers: auth,
