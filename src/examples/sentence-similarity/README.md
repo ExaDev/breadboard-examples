@@ -5,6 +5,6 @@ https://breadboard-ai.web.app/?mode=build&board=https%3A%2F%2Fraw.githubusercont
 
 NOTE: For this board to work we have to set the "sentences" type to array and provide input as : ["string", "string2", "string3"]
 
-NOTE: SOMETIMES IT WILL ERROR BECAUSE MODEL IS LOADING, JUST RUN THE BOARD AGAIN.
-
 API Key can be generated for free: https://huggingface.co/settings/tokens
+
+NOTE: SOMETIMES IT WILL ERROR BECAUSE MODEL IS LOADING, JUST RUN THE BOARD AGAIN.

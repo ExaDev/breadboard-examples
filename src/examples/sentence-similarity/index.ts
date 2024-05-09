@@ -24,14 +24,6 @@ const keySchema = {
     description: "The hugging face api key"
 };
 
-export type HuggingFaceSentenceSimilarityRawParams = {
-    source_sentence: string
-    sentences: string[]
-
-    use_cache: boolean
-    wait_for_model: boolean
-};
-
 export type HuggingFaceSentenceSimilarityParams = {
     inputs: {
         source_sentence: string
@@ -55,8 +47,6 @@ const handleParams = code<{ source_sentence: string, sentences: string[] }>((inp
             sentences: sentences
         },
     };
-
-    console.log("payload", payload)
 
     return { payload }
 });

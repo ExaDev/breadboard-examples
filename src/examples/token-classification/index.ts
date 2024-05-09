@@ -29,7 +29,6 @@ const aggregationStrategySchema = {
     max: Same as the simple strategy except words cannot end up with different tags. Word entity will be the token with the maximum score.`
 };
 
-
 const useCacheSchema = {
     type: "boolean",
     title: "use_cache",
@@ -44,14 +43,6 @@ const waitForModelSchema = {
     description: " Boolean. If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places"
 };
 
-export type HuggingFaceTokenClassificationRawParams = {
-    inputs: string
-    aggregation_strategy: "simple" | "first" | "average"
-
-    use_cache: boolean
-    wait_for_model: boolean
-};
-
 export type HuggingFaceTokenClassificationParams = {
     inputs: string
     parameters: {
@@ -62,7 +53,6 @@ export type HuggingFaceTokenClassificationParams = {
         }
     }
 };
-
 
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key

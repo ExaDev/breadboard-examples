@@ -31,15 +31,6 @@ const numReturnSequencesSchema = {
     description: "Number of responses "
 }
 
-
-export type HuggingFaceTextGenerationRawParams = {
-    inputs: string
-    top_k: number;
-    top_p: number;
-    max_length: number;
-    num_return_sequences: number;
-};
-
 export type HuggingFaceTextGenerationParams = {
     inputs: string
     parameters: {
