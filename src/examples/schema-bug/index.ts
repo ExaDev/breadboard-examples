@@ -1,6 +1,6 @@
 
 
-import { board, base } from "@google-labs/breadboard";
+import { board, base, code } from "@google-labs/breadboard";
 import path from "path";
 import fs from "fs"
 
@@ -18,13 +18,21 @@ const numberNonRequiredSchema = {
     description: "Non-Required number input"
 }
 
+const handleParams = code<{ num_required: number, num_non_required: number }>((input) => {
+    const { num_required, num_non_required } = input
+
+    const payload = { num_required: num_required, num_non_required: num_non_required }
+
+    return { payload }
+});
+
 const serialized = await board(() => {
     const inputs = base.input({
         $id: "inputs",
         schema: {
             title: "Bugged Schema Type",
             properties: {
-                number_required:numberRequiredSchema,
+                number_required: numberRequiredSchema,
                 number_non_required: numberNonRequiredSchema
             },
             required: ["number_required"]
@@ -33,10 +41,12 @@ const serialized = await board(() => {
 
     const output = base.output();
 
+    const data = handleParams({ num_required: inputs.number_required as unknown as number, num_non_required: inputs.number_non_required as unknown as number })
+
     inputs.number_required.as("output1").to(output);
     inputs.number_non_required.as("output2").to(output);
 
-    return {output}
+    return { output }
 }).serialize({
     title: "Schema Bug Demonstration",
     description: "Board which demonstrates type convertion bug"
