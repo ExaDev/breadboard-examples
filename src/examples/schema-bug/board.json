@@ -1,0 +1,87 @@
+{
+	"title": "Schema Bug Demonstration",
+	"description": "Board which demonstrates type convertion bug",
+	"edges": [
+		{
+			"from": "output-3",
+			"to": "output-2",
+			"out": "output",
+			"in": "output"
+		},
+		{
+			"from": "inputs",
+			"to": "output-3",
+			"out": "number_required",
+			"in": "output1"
+		},
+		{
+			"from": "inputs",
+			"to": "output-3",
+			"out": "number_non_required",
+			"in": "output2"
+		}
+	],
+	"nodes": [
+		{
+			"id": "output-2",
+			"type": "output",
+			"configuration": {
+				"schema": {
+					"type": "object",
+					"properties": {
+						"output": {
+							"type": "string",
+							"title": "output"
+						}
+					}
+				}
+			}
+		},
+		{
+			"id": "output-3",
+			"type": "output",
+			"configuration": {
+				"schema": {
+					"type": "object",
+					"properties": {
+						"output1": {
+							"type": "string",
+							"title": "output1"
+						},
+						"output2": {
+							"type": "string",
+							"title": "output2"
+						}
+					}
+				}
+			}
+		},
+		{
+			"id": "inputs",
+			"type": "input",
+			"configuration": {
+				"schema": {
+					"title": "Bugged Schema Type",
+					"properties": {
+						"number_required": {
+							"type": "number",
+							"title": "number_required",
+							"default": "1",
+							"description": "Required number input"
+						},
+						"number_non_required": {
+							"type": "number",
+							"title": "number_non-required",
+							"default": "2",
+							"description": "Non-Required number input"
+						}
+					},
+					"required": [
+						"number_required"
+					]
+				}
+			}
+		}
+	],
+	"graphs": {}
+}
