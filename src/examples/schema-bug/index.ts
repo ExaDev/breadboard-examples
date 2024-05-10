@@ -43,8 +43,7 @@ const serialized = await board(() => {
 
     const data = handleParams({ num_required: inputs.number_required as unknown as number, num_non_required: inputs.number_non_required as unknown as number })
 
-    inputs.number_required.as("output1").to(output);
-    inputs.number_non_required.as("output2").to(output);
+    data.to(output)
 
     return { output }
 }).serialize({
