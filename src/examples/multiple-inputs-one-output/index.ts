@@ -1,7 +1,7 @@
 #! /usr/bin/env npx -y tsx
 
 import { base, board } from "@google-labs/breadboard";
-import { merMake } from "../../util/merMake.js";
+import { makeFiles } from "../../util/merMake.js";
 
 const myBoard = board<{ messageOne: string; }>(({ messageOne }) => {
 	const inputNodeTwo = base.input({
@@ -51,7 +51,7 @@ console.log(
 	)
 );
 
-await merMake({
+await makeFiles({
 	graph: myBoard,
 	destination: import.meta.dirname,
 });

@@ -1,7 +1,7 @@
 import { base, board, BoardRunner, InputValues } from "@google-labs/breadboard";
 import { run, RunConfig } from "@google-labs/breadboard/harness";
-import { merMake } from "../../util/merMake.js";
 import { InputResolveRequest } from "@google-labs/breadboard/remote";
+import { makeFiles } from "../../util/merMake.js";
 
 const myBoard = await board<InputValues>((inputs) => {
 	const { partOne, partTwo } = inputs;
@@ -87,7 +87,7 @@ while (!result.done) {
 	result = await iterator.next();
 }
 
-await merMake({
+await makeFiles({
 	graph: myBoard,
 	destination: import.meta.dirname,
 });

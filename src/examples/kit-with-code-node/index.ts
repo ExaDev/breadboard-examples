@@ -1,6 +1,6 @@
 import { BoardRunner, addKit, asRuntimeKit, board, code } from "@google-labs/breadboard";
-import { merMake } from "../../util/merMake.js";
 import { KitBuilder } from "@google-labs/breadboard/kits";
+import { makeFiles } from "../../util/merMake.js";
 
 const myMessage = `Dogs are an amazing part of life and can bring joy to your whole family, but when your little fur ball gets hurt or sick it can be a scary time. In this article I will be looking at the 9 healthiest dog breeds and how they made the list.
 Though these breeds are proven to be resilient there can still be complications as all dogs are different. If you are getting a dog from a breeder make sure it is a reputable one and if you are adopting contact your veterinarian to get your dog checked out. No dogs will be 100% healthy their entire life but this list of dogs can hold their own.`
@@ -50,7 +50,7 @@ for await (const stop of runner.run({ kits: [asRuntimeKit(myKit)] })) {
     }
 }
 
-merMake({
+makeFiles({
     graph: serializedBoard,
     destination: import.meta.dirname,
 });

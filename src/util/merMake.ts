@@ -2,7 +2,7 @@ import { GraphDescriptor, GraphMetadata, Lambda, toMermaid } from "@google-labs/
 import fs from "fs";
 import path from "path";
 
-export async function merMake({ graph, metadata, destination: output = process.cwd() }: {
+export async function makeFiles({ graph, metadata, destination: output = process.cwd() }: {
 	graph: GraphDescriptor | Lambda<any, any>,
 	metadata?: GraphMetadata,
 	destination?: string;
@@ -28,4 +28,8 @@ export async function merMake({ graph, metadata, destination: output = process.c
 		condeFence.join("\n"),
 		jsonCodeFence.join("\n"),
 	].filter(Boolean).join("\n\n"));
+
+	const outputDir = path.dirname(output);
+	const jsonFile = path.join(outputDir, "graph.json");
+	fs.writeFileSync(jsonFile, json);
 }

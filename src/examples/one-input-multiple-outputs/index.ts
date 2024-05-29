@@ -1,7 +1,7 @@
 #! /usr/bin/env npx -y tsx
 
 import { base, board, BoardRunner, InputValues } from "@google-labs/breadboard";
-import { merMake } from "../../util/merMake.js";
+import { makeFiles } from "../../util/merMake.js";
 
 const myBoardSerialized = await board<InputValues>(
 	(inputs) => {
@@ -56,7 +56,7 @@ for await (const stop of runner.run()) {
 	}
 }
 
-await merMake({
+await makeFiles({
 	graph: myBoardSerialized,
 	destination: import.meta.dirname,
 });

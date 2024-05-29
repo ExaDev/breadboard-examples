@@ -1,12 +1,12 @@
 import {
-	BoardRunner,
-	OutputValues,
-	asRuntimeKit,
-	board,
-	code,
+    BoardRunner,
+    OutputValues,
+    asRuntimeKit,
+    board,
+    code,
 } from "@google-labs/breadboard";
-import { merMake } from "../../util/merMake.js";
 import Core from "@google-labs/core-kit";
+import { makeFiles } from "../../util/merMake.js";
 
 const toUppercase = code<{ input: string }, OutputValues>(({ input }) => {
 	const uppercase = input.toUpperCase();
@@ -54,7 +54,7 @@ console.log(
 		2
 	)
 );
-await merMake({
+await makeFiles({
 	graph: myBoard,
 	destination: import.meta.dirname,
 });

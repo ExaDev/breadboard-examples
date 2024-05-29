@@ -1,6 +1,6 @@
 import { addKit, board, InputValues, OutputValues } from "@google-labs/breadboard";
 import { KitBuilder } from "@google-labs/breadboard/kits";
-import { merMake } from "../../util/merMake.js";
+import { makeFiles } from "../../util/merMake.js";
 
 const stringKit = new KitBuilder({
 	url: "."
@@ -35,7 +35,7 @@ const myBoard = board<InputValues, { output: string; }>(
 
 console.log(JSON.stringify(await myBoard({ text: "hello", num: 2 }), null, 2));
 
-await merMake({
+await makeFiles({
 	graph: myBoard,
 	metadata: {
 		// title: "",

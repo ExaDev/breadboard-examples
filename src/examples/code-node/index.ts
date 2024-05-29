@@ -5,7 +5,7 @@ import {
 	board,
 	code
 } from "@google-labs/breadboard";
-import { merMake } from "../../util/merMake.js";
+import { makeFiles } from "../../util/merMake.js";
 
 // Define code node outside board
 const toUppercase = code<{ input: string; }, OutputValues>(({ input }) => {
@@ -46,7 +46,7 @@ console.log(
 	JSON.stringify(await myBoard({ greet: "Hello", subject: "World" }), null, 2)
 );
 
-await merMake({
+await makeFiles({
 	graph: myBoard,
 	destination: import.meta.dirname,
 });
