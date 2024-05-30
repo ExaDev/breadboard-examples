@@ -29,6 +29,7 @@ const kitInstance = addKit(myKit);
 //  using code node via kit
 const kitBoard = board(({ message }) => {
     const { output } = kitInstance.pipe(message)
+    console.log("OUTPUT", output)
     return { output };
 });
 
