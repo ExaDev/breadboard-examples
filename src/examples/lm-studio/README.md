@@ -1,6 +1,6 @@
 # Breadboard and LM Studio
 
-LM Studio allows us to run our own LLM locally. This is great for experimenting with breadboard, not only do we get to choose which LLM to use, but it also means we don't require API keys.
+LM Studio allows us to run our own LLM locally. This is great for experimenting with breadboard, not only do we get to choose which LLM to use, but it also means we don't require API keys. This document will show us how to set up LM studio and use Breadboard to interact with it.
 
 ## LM Studio
 
