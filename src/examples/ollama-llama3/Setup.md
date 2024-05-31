@@ -8,7 +8,7 @@ For this demonstation, we need to download [Ollama](https://ollama.com/). Once w
 
 ### Starting the server
 
-From a command line, we can start our Ollama server using the `Ollama run llama3` command
+From a command line, we can start our Ollama server using the `ollama run llama3` command
 
 ## Breadboard Integration
 
