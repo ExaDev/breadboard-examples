@@ -157,11 +157,11 @@ console.log(JSON.stringify(await llamaBoard({model:"llama3", prompt :"Return me 
 
 
 ### Example Output
-```Json
+```JSON
 payload {
-  stream: false,
-  model: 'llama3',
-  prompt: "Return me a list of all the world's continents"
+  "stream": false,
+  "model": "llama3",
+  "prompt": "Return me a list of all the world's continents"
 }
 {
   "response": {
@@ -170,7 +170,6 @@ payload {
     "response": "There are generally considered to be 7 continents:\n\n1. **Africa**\n2. **Antarctica** (note: sometimes considered a single continent with several regions, e.g., East Antarctica and West Antarctica)\n3. **Asia**\n4. **Australia/Oceania** (note: some sources consider Australia and Oceania as separate continents; others combine them into one)\n5. **Europe**\n6. **North America**\n7. **South America**\n\nSome definitions of a continent may group Europe and Asia together as a single continent, Eurasia, or combine North and South America as the Americas. Additionally, some sources consider the Arctic region to be a separate continent.\n\nHere's a brief description of each:\n\n1. Africa: Home to over 50 countries, including Egypt, Nigeria, and South Africa.\n2. Antarctica: An icy, frozen continent with no permanent residents (only scientists at research stations).\n3. Asia: The largest and most populous continent, featuring countries like China, India, Japan, and Indonesia.\n4. Australia/Oceania: A vast region of islands, including Australia, New Zealand, Papua New Guinea, and many Pacific Island nations.\n5. Europe: A diverse region with 50+ countries, such as the UK, Germany, France, Italy, Spain, and Greece.\n6. North America: Encompassing Canada, Mexico, the United States, and several Caribbean islands.\n7. South America: Comprising countries like Brazil, Argentina, Chile, Peru, and Colombia.\n\nKeep in mind that different sources may define continents slightly differently, but these 7 are generally accepted.",
     "done": true,
     "done_reason": "stop",
-    ...
   }
 }
 
