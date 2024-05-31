@@ -158,11 +158,6 @@ console.log(JSON.stringify(await llamaBoard({model:"llama3", prompt :"Return me 
 
 ### Example Output
 ```JSON
-payload {
-  "stream": false,
-  "model": "llama3",
-  "prompt": "Return me a list of all the world's continents"
-}
 {
   "response": {
     "model": "llama3",
