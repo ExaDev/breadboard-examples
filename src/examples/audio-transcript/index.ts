@@ -65,7 +65,7 @@ const huggingFaceAudioTranscript = board(() => {
 })
 
 // Demonstrates what the board would output
-async function query(filename: string) {
+export async function query(filename: string) {
     const data = fs.readFileSync(filename);
     const response = await fetch(
         "https://api-inference.huggingface.co/models/facebook/wav2vec2-base-960h",
@@ -79,6 +79,15 @@ async function query(filename: string) {
     return result;
 }
 
-query("audio-sample.mp3").then((response) => {
-    console.log("AUDIO TRANSCRIPT", JSON.stringify(response));
+export const demo = async () => {
+    await query("audio-sample.mp3").then((response) => {
+        console.log("AUDIO TRANSCRIPT", JSON.stringify(response));
 });
+};
+
+export const serialised = huggingFaceAudioTranscript.serialize({
+    title: "Hugging Face Audio Transcript",
+    description: "Transcribe an audio file using Hugging Face's Wav2Vec2 model",
+});
+fs.writeFileSync("graph.json", JSON.stringify(serialised, null, 2));
+export default serialised;
