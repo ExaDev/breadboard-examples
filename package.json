@@ -1,11 +1,16 @@
 {
 	"dependencies": {
+		"@anthropic-ai/tokenizer": "^0.0.4",
 		"@google-labs/breadboard": "0.11.2",
 		"@google-labs/core-kit": "0.4.0",
-		"@xenova/transformers": "^2.15.1"
+		"@xenova/transformers": "^2.15.1",
+		"axios": "^1.7.2",
+		"cheerio": "^1.0.0-rc.12",
+		"js-tiktoken": "^1.0.12"
 	},
 	"devDependencies": {
 		"@types/node": "^20.11.20",
+		"dotenv": "^16.4.5",
 		"tsx": "^4.7.1",
 		"typescript": "^5.3.3"
 	},
@@ -19,7 +24,9 @@
 		"multiple-inputs-one-output": "tsx src/examples/multiple-inputs-one-output/index.ts",
 		"one-input-multiple-outputs": "tsx src/examples/one-input-multiple-outputs/index.ts",
 		"running-serialized-board-with-code-node": "tsx src/examples/running-serialized-board-with-code-node/index.ts",
-		"wiring-nodes": "tsx src/examples/wiring-nodes/index.ts"
+		"wiring-nodes": "tsx src/examples/wiring-nodes/index.ts",
+		"course-crafter-single": "npx -y tsx src/examples/course-crafter/src/single/run-board.ts",
+		"course-crafter-multiple": "npx -y tsx src/examples/course-crafter/src/multiple/run-board.ts"
 	},
 	"type": "module"
 }

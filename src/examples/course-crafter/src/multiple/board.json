@@ -1,0 +1,162 @@
+{
+  "title": "CourseCrafter Multiple",
+  "description": "CourseCrafter for a multiple URL.",
+  "edges": [
+    {
+      "from": "claudeAPI",
+      "to": "output-2",
+      "out": "completion",
+      "in": "completion"
+    },
+    {
+      "from": "readEnvVar-3",
+      "to": "claudeAPI",
+      "out": "apiKey",
+      "in": "apiKey"
+    },
+    {
+      "from": "claudePromptConstructor",
+      "to": "claudeAPI",
+      "out": "string",
+      "in": "text"
+    },
+    {
+      "from": "promptDetails",
+      "to": "claudePromptConstructor",
+      "out": "template",
+      "in": "template"
+    },
+    {
+      "from": "getBlogsContent",
+      "to": "summaryLanguageModel",
+      "out": "blogContent",
+      "in": "inputs"
+    },
+    {
+      "from": "getBlogsContent",
+      "to": "claudePromptConstructor",
+      "out": "blogOutput",
+      "in": "blogContents"
+    },
+    {
+      "from": "summaryLanguageModel",
+      "to": "claudePromptConstructor",
+      "out": "summaries",
+      "in": "summaries"
+    },
+    {
+      "from": "blogDetails",
+      "to": "getBlogsContent",
+      "out": "list",
+      "in": "list"
+    },
+    {
+      "from": "taskDetails",
+      "to": "getBlogsContent",
+      "out": "model",
+      "in": "model"
+    },
+    {
+      "from": "taskDetails",
+      "to": "getBlogsContent",
+      "out": "task",
+      "in": "task"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "output-2",
+      "type": "output",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "completion": {
+              "type": "string",
+              "title": "completion"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "claudeAPI",
+      "type": "generateCompletion",
+      "configuration": {
+        "model": "claude-2",
+        "url": "https://api.anthropic.com/v1/complete"
+      }
+    },
+    {
+      "id": "readEnvVar-3",
+      "type": "readEnvVar",
+      "configuration": {
+        "key": "CLAUDE_API_KEY"
+      }
+    },
+    {
+      "id": "claudePromptConstructor",
+      "type": "template",
+      "configuration": {}
+    },
+    {
+      "id": "promptDetails",
+      "type": "input",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "title": "Text",
+              "description": "urls"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "getBlogsContent",
+      "type": "getBlogsContent",
+      "configuration": {}
+    },
+    {
+      "id": "summaryLanguageModel",
+      "type": "pipelineBulk",
+      "configuration": {}
+    },
+    {
+      "id": "blogDetails",
+      "type": "input",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "list",
+              "title": "Text",
+              "description": "urls"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "taskDetails",
+      "type": "input",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "title": "Text",
+              "description": "model and task"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "graphs": {}
+}
