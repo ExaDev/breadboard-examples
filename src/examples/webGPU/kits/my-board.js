@@ -36,7 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processVertices = exports.renderDevice = void 0;
+exports.myBoard = exports.renderDevice = void 0;
+var breadboard_1 = require("@google-labs/breadboard");
 function renderDevice() {
     return __awaiter(this, void 0, void 0, function () {
         var canvas, adapter, context, device, cellShaderModule, canvasFormat, vertexBufferLayout, cellPipeline, vertices, encoder, vertexBuffer, pass, commandBuffer;
@@ -46,7 +47,6 @@ function renderDevice() {
                     if (!navigator.gpu) {
                         throw new Error("WebGPU not supported on this browser.");
                     }
-                    console.log("SUPPORTED");
                     canvas = document.querySelector("canvas");
                     if (!navigator.gpu) {
                         throw new Error("WebGPU not supported on this browser.");
@@ -97,7 +97,7 @@ function renderDevice() {
                     vertices = new Float32Array([
                         //   X,    Y,
                         -0.8, -0.8, // Triangle 1 (Blue)
-                        0.8, -0.3,
+                        0.8, -0.8,
                         0.8, 0.8,
                         -0.8, -0.8, // Triangle 2 (Red)
                         0.8, 0.8,
@@ -123,13 +123,23 @@ function renderDevice() {
                     pass.end();
                     commandBuffer = encoder.finish();
                     device.queue.submit([commandBuffer]);
-                    console.log("DONE");
                     return [2 /*return*/];
             }
         });
     });
 }
 exports.renderDevice = renderDevice;
-function processVertices(vertices) {
-}
-exports.processVertices = processVertices;
+var render = (0, breadboard_1.code)(function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, renderDevice()];
+            case 1:
+                _a.sent();
+                return [2 /*return*/, {}];
+        }
+    });
+}); });
+exports.myBoard = (0, breadboard_1.board)(function () {
+    render();
+    return {};
+});

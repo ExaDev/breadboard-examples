@@ -1,10 +1,11 @@
+import { board, code } from "@google-labs/breadboard";
+import { KitBuilder } from "@google-labs/breadboard/kits";
+
 export async function renderDevice () {
   if (!navigator.gpu) {
     throw new Error("WebGPU not supported on this browser.");
   }
   
-  console.log("SUPPORTED")
-
   const canvas = document.querySelector("canvas");
   if (!navigator.gpu) {
     throw new Error("WebGPU not supported on this browser.");
@@ -85,7 +86,6 @@ export async function renderDevice () {
     usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
   });
 
-
   device.queue.writeBuffer(vertexBuffer, /*bufferOffset=*/0, vertices);
 
   const pass = encoder.beginRenderPass({
@@ -103,10 +103,19 @@ export async function renderDevice () {
   pass.end()
   const commandBuffer = encoder.finish();
   device.queue.submit([commandBuffer]);
-
-  console.log("DONE")
 }
 
-export function processVertices(vertices: number[]) {
-  
-}
+const render = code(async () => {
+  await renderDevice()
+
+  return {}
+})
+
+export const myBoard = board(() => {
+  render()
+
+  return {  }
+})
+
+
+
