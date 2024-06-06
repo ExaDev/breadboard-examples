@@ -2,12 +2,14 @@
 	"dependencies": {
 		"@google-labs/breadboard": "0.11.2",
 		"@google-labs/core-kit": "0.4.0",
+		"@webgpu/types": "^0.1.42",
 		"@xenova/transformers": "^2.15.1"
 	},
 	"devDependencies": {
 		"@types/node": "^20.11.20",
 		"tsx": "^4.7.1",
-		"typescript": "^5.3.3"
+		"typescript": "^5.3.3",
+		"@webgpu/types": "^0.1.31"
 	},
 	"scripts": {
 		"code-node": "tsx src/examples/code-node/index.ts",
