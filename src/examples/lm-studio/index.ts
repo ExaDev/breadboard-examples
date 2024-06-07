@@ -1,6 +1,6 @@
 import { board, base, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
-
+import { makeFiles } from "../../util/merMake.js";
 
 type context = {
     role: string,
@@ -63,7 +63,7 @@ const streamSchema = {
     description: "Boolean to indicate if the model should stream the answer as it is being constructed"
 }
 
-const handleParams = code<{ systemRole: string, userRole: string, systemContext: string, userContext: string, temperature: number, max_tokens: number, stream: boolean }>((input) => {
+const buildRequest = code<{ systemRole: string, userRole: string, systemContext: string, userContext: string, temperature: number, max_tokens: number, stream: boolean }>((input) => {
     const { systemRole, userRole, systemContext, userContext, temperature, max_tokens, stream } = input
 
     const context1: context = { role: systemRole, content: systemContext }
@@ -105,7 +105,7 @@ const myBoard = board(() => {
     const url = "http://host.docker.internal:1234/v1/chat/completions"
     const output = base.output({ $id: "main" });
 
-    const { payload } = handleParams({
+    const { payload } = buildRequest({
         systemContext: inputs.systemContext.isString(),
         userContext: inputs.userContext.isString(),
         systemRole: inputs.systemRole.isString(),
@@ -135,3 +135,9 @@ console.log(JSON.stringify(await myBoard({
     temperature: 1,
     max_tokens: -1,
     stream: false }), null, 2));
+
+
+await makeFiles({
+    graph: myBoard,
+    destination: import.meta.dirname,
+});
