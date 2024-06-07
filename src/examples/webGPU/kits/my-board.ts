@@ -1,5 +1,4 @@
 import { board, code } from "@google-labs/breadboard";
-import { KitBuilder } from "@google-labs/breadboard/kits";
 
 export async function renderDevice () {
   if (!navigator.gpu) {
@@ -103,7 +102,9 @@ export async function renderDevice () {
   pass.end()
   const commandBuffer = encoder.finish();
   device.queue.submit([commandBuffer]);
+
 }
+
 
 const render = code(async () => {
   await renderDevice()
@@ -112,7 +113,9 @@ const render = code(async () => {
 })
 
 export const myBoard = board(() => {
-  render()
+  //render()
+
+  console.log("IN BOARD")
 
   return {  }
 })

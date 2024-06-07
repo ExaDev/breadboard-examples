@@ -140,6 +140,7 @@ var render = (0, breadboard_1.code)(function () { return __awaiter(void 0, void 
     });
 }); });
 exports.myBoard = (0, breadboard_1.board)(function () {
-    render();
+    //render()
+    console.log("IN BOARD");
     return {};
 });

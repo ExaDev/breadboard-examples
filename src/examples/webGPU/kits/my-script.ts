@@ -1,5 +1,6 @@
-import { myBoard } from "./my-board";
+//import { myBoard } from "./my-board.js";
 
-async() => {
-	await myBoard();
+async () => {
+	console.log("MY BOARD")
+	//await myBoard();
 }
