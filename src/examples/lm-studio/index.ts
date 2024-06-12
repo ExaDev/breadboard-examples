@@ -112,7 +112,7 @@ const myBoard = board(() => {
         userRole: inputs.userRole.isString(),
         temperature: inputs.temperature.isNumber(),
         max_tokens: inputs.maxToken.isNumber(),
-        steam: inputs.stream.isBoolean()
+        stream: inputs.stream.isBoolean()
     });
 
     const response = core.fetch({
@@ -121,7 +121,6 @@ const myBoard = board(() => {
         body: payload,
         url: url
     });
-
     response.to(output);
     return { output }
 });

@@ -58,7 +58,7 @@
 			"from": "query",
 			"to": "fn-3",
 			"out": "stream",
-			"in": "steam"
+			"in": "stream"
 		}
 	],
 	"nodes": [
