@@ -111,7 +111,7 @@ const myBoard = board(() => {
         systemRole: inputs.systemRole.isString(),
         userRole: inputs.userRole.isString(),
         temperature: inputs.temperature.isNumber(),
-        max_tokens: inputs.max_tokens.isNumber(),
+        max_tokens: inputs.maxToken.isNumber(),
         steam: inputs.stream.isBoolean()
     });
 
@@ -133,7 +133,7 @@ console.log(JSON.stringify(await myBoard({
     systemRole: "system",
     userRole: "user",
     temperature: 1,
-    max_tokens: -1,
+    maxToken: -1,
     stream: false }), null, 2));
 
 

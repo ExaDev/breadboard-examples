@@ -10,7 +10,7 @@ query[/"input <br> id='query'"/]:::input -- "userContext->userContext" --> fn3["
 query[/"input <br> id='query'"/]:::input -- "systemRole->systemRole" --> fn3["invoke <br> id='fn-3'"]
 query[/"input <br> id='query'"/]:::input -- "userRole->userRole" --> fn3["invoke <br> id='fn-3'"]
 query[/"input <br> id='query'"/]:::input -- "temperature->temperature" --> fn3["invoke <br> id='fn-3'"]
-query[/"input <br> id='query'"/]:::input -- "max_tokens->max_tokens" --> fn3["invoke <br> id='fn-3'"]
+query[/"input <br> id='query'"/]:::input -- "maxToken->max_tokens" --> fn3["invoke <br> id='fn-3'"]
 query[/"input <br> id='query'"/]:::input -- "stream->steam" --> fn3["invoke <br> id='fn-3'"]
 
 subgraph sg_fn3 [fn-3]
@@ -83,7 +83,7 @@ classDef slotted stroke:#a64d79
 		{
 			"from": "query",
 			"to": "fn-3",
-			"out": "max_tokens",
+			"out": "maxToken",
 			"in": "max_tokens"
 		},
 		{

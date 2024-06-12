@@ -51,7 +51,7 @@
 		{
 			"from": "query",
 			"to": "fn-3",
-			"out": "max_tokens",
+			"out": "maxToken",
 			"in": "max_tokens"
 		},
 		{
