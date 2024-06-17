@@ -28,6 +28,7 @@ const transcribeFile = code<{ file_name: string, apiKey: string}>(async (input) 
 		}
 	);
 	const result = await response.json();
+
 	return {result};
 });
 
@@ -45,8 +46,6 @@ export const huggingFaceAudioTranscript = board(() => {
 		type: "string",
 	});
 
-	const task =
-		"https://api-inference.huggingface.co/models/facebook/wav2vec2-base-960h";
 	const output = base.output({ $id: "main" });
 
 	const { result } = transcribeFile({file_name: inputs.file_name.isString(), apiKey :inputs.apiKey.isString()}) 

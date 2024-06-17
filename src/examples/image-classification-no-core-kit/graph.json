@@ -1,0 +1,129 @@
+{
+  "title": "Hugging Face Image Classification",
+  "edges": [
+    {
+      "from": "main",
+      "to": "output-2",
+      "out": "output",
+      "in": "output"
+    },
+    {
+      "from": "fn-3",
+      "to": "main",
+      "out": "result",
+      "in": "result"
+    },
+    {
+      "from": "query",
+      "to": "fn-3",
+      "out": "file_name",
+      "in": "file_name"
+    },
+    {
+      "from": "query",
+      "to": "fn-3",
+      "out": "apiKey",
+      "in": "apiKey"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "output-2",
+      "type": "output",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "output": {
+              "type": "string",
+              "title": "output"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "main",
+      "type": "output",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": "string",
+              "title": "result"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "fn-3",
+      "type": "invoke",
+      "configuration": {
+        "$board": "#fn-3"
+      }
+    },
+    {
+      "id": "query",
+      "type": "input",
+      "configuration": {
+        "schema": {
+          "title": "Hugging Face Schema For Image Classification",
+          "properties": {
+            "file_name": {
+              "type": "string",
+              "title": "file_path",
+              "default": "cat.jpg",
+              "description": "The image file to classify"
+            },
+            "apiKey": {
+              "type": "string",
+              "title": "apiKey",
+              "default": "myKey",
+              "description": "The hugging face api key"
+            }
+          }
+        },
+        "type": "string"
+      }
+    }
+  ],
+  "graphs": {
+    "fn-3": {
+      "edges": [
+        {
+          "from": "fn-3-input",
+          "to": "fn-3-run",
+          "out": "*"
+        },
+        {
+          "from": "fn-3-run",
+          "to": "fn-3-output",
+          "out": "*"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fn-3-input",
+          "type": "input",
+          "configuration": {}
+        },
+        {
+          "id": "fn-3-run",
+          "type": "runJavascript",
+          "configuration": {
+            "code": "async function fn_3(input) {const{file_name,apiKey}=input;const data=fs.readFileSync(file_name);const response=await fetch(\"https://api-inference.huggingface.co/models/google/vit-base-patch16-224\",{headers:{Authorization:`Bearer ${apiKey}`},method:\"POST\",body:data});const result=await response.json();return{result}}",
+            "name": "fn_3",
+            "raw": true
+          }
+        },
+        {
+          "id": "fn-3-output",
+          "type": "output",
+          "configuration": {}
+        }
+      ]
+    }
+  }
+}

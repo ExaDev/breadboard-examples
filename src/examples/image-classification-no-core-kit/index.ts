@@ -26,12 +26,20 @@ const authenticate = code<{ key: string }>((inputs) => {
 	return { auth };
 });
 
-const handleParams = code<{ file_name: string }>((input) => {
-	const { file_name } = input;
+const classifyImage = code<{ file_name: string, apiKey: string}>(async (input) => {
+	const {file_name, apiKey} = input
 
-	const payload = fs.readFileSync(file_name);
-
-	return { payload };
+	const data = fs.readFileSync(file_name);
+	const response = await fetch(
+		"https://api-inference.huggingface.co/models/google/vit-base-patch16-224",
+		{
+			headers: { Authorization: `Bearer ${apiKey}` },
+			method: "POST",
+			body: data,
+		}
+	);
+	const result = await response.json();
+	return {result};
 });
 
 // // THIS CAN'T BE A BOARD UNTIL CORE KIT FETCH GETS FIXED, BECAUSE IT STRINGIFIES THE BODY OF THE REQUEST
@@ -48,49 +56,21 @@ const huggingFaceImageClassification = board(() => {
 		type: "string",
 	});
 
-	const task =
-		"https://api-inference.huggingface.co/models/facebook/wav2vec2-base-960h";
+
 	const output = base.output({ $id: "main" });
 
-	const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
-	const { payload } = handleParams({
-		file_name: inputs.file_name as unknown as string,
-	});
+	const { result } = classifyImage({file_name: inputs.file_name.isString(), apiKey :inputs.apiKey.isString()}) 
 
-	const response = core.fetch({
-		headers: auth,
-		method: "POST",
-		body: payload,
-		url: task,
-	});
-
-	response.to(output);
+	result.to(output);
 	return { output };
 });
 
-// Demonstrates what the board would output
-async function query(filename: string) {
-	const data = fs.readFileSync(filename);
-	const response = await fetch(
-		"https://api-inference.huggingface.co/models/google/vit-base-patch16-224",
-		{
-			headers: { Authorization: `Bearer mykey` },
-			method: "POST",
-			body: data,
-		}
-	);
-	const result = await response.json();
-	return result;
-}
-
-query("cat.jpg").then((response) => {
-	console.log("CLASSIFCATION RESULTS", JSON.stringify(response));
-});
 
 const serialised = await huggingFaceImageClassification.serialize({
 	title: "Hugging Face Image Classification",
 });
 export default serialised;
+
 fs.writeFileSync(
 	path.join(import.meta.dirname, "graph.json"),
 	JSON.stringify(serialised, null, 2)
