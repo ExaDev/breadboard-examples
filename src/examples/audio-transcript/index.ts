@@ -1,6 +1,9 @@
+#!/usr/bin/env -S npx -y tsx --no-cache
+
 import { base, board, code } from "@google-labs/breadboard";
 import { core } from "@google-labs/core-kit";
 import fs from "fs";
+import path from "path";
 
 const filePathSchema = {
 	type: "string",
@@ -86,9 +89,14 @@ export const demo = async () => {
 	});
 };
 
-export const serialised = huggingFaceAudioTranscript.serialize({
+export const serialised = await huggingFaceAudioTranscript.serialize({
 	title: "Hugging Face Audio Transcript",
 	description: "Transcribe an audio file using Hugging Face's Wav2Vec2 model",
 });
-fs.writeFileSync("graph.json", JSON.stringify(serialised, null, 2));
+
+fs.writeFileSync(
+	path.join(import.meta.dirname, "graph.json"),
+	JSON.stringify(serialised, null, 2)
+);
+
 export default serialised;

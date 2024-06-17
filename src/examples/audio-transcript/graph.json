@@ -1,1 +1,182 @@
-{}
+{
+  "title": "Hugging Face Audio Transcript",
+  "description": "Transcribe an audio file using Hugging Face's Wav2Vec2 model",
+  "edges": [
+    {
+      "from": "main",
+      "to": "output-2",
+      "out": "output",
+      "in": "output"
+    },
+    {
+      "from": "fetch-5",
+      "to": "main",
+      "out": "*",
+      "in": ""
+    },
+    {
+      "from": "fn-3",
+      "to": "fetch-5",
+      "out": "auth",
+      "in": "headers"
+    },
+    {
+      "from": "fn-4",
+      "to": "fetch-5",
+      "out": "payload",
+      "in": "body"
+    },
+    {
+      "from": "query",
+      "to": "fn-3",
+      "out": "apiKey",
+      "in": "key"
+    },
+    {
+      "from": "query",
+      "to": "fn-4",
+      "out": "file_name",
+      "in": "file_name"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "output-2",
+      "type": "output",
+      "configuration": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "output": {
+              "type": "string",
+              "title": "output"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "main",
+      "type": "output",
+      "configuration": {}
+    },
+    {
+      "id": "fetch-5",
+      "type": "fetch",
+      "configuration": {
+        "method": "POST",
+        "url": "https://api-inference.huggingface.co/models/facebook/wav2vec2-base-960h"
+      }
+    },
+    {
+      "id": "fn-3",
+      "type": "invoke",
+      "configuration": {
+        "$board": "#fn-3"
+      }
+    },
+    {
+      "id": "fn-4",
+      "type": "invoke",
+      "configuration": {
+        "$board": "#fn-4"
+      }
+    },
+    {
+      "id": "query",
+      "type": "input",
+      "configuration": {
+        "schema": {
+          "title": "Hugging Face Schema For Audio Transcript",
+          "properties": {
+            "file_name": {
+              "type": "string",
+              "title": "inputs",
+              "default": "my_file.mp4",
+              "description": "The audio file to transcribe"
+            },
+            "apiKey": {
+              "type": "string",
+              "title": "apiKey",
+              "default": "myKey",
+              "description": "The hugging face api key"
+            }
+          }
+        },
+        "type": "string"
+      }
+    }
+  ],
+  "graphs": {
+    "fn-3": {
+      "edges": [
+        {
+          "from": "fn-3-input",
+          "to": "fn-3-run",
+          "out": "*"
+        },
+        {
+          "from": "fn-3-run",
+          "to": "fn-3-output",
+          "out": "*"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fn-3-input",
+          "type": "input",
+          "configuration": {}
+        },
+        {
+          "id": "fn-3-run",
+          "type": "runJavascript",
+          "configuration": {
+            "code": "function fn_3(inputs) {const key=inputs.key;const auth={Authorization:`Bearer ${key}`};return{auth}}",
+            "name": "fn_3",
+            "raw": true
+          }
+        },
+        {
+          "id": "fn-3-output",
+          "type": "output",
+          "configuration": {}
+        }
+      ]
+    },
+    "fn-4": {
+      "edges": [
+        {
+          "from": "fn-4-input",
+          "to": "fn-4-run",
+          "out": "*"
+        },
+        {
+          "from": "fn-4-run",
+          "to": "fn-4-output",
+          "out": "*"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "fn-4-input",
+          "type": "input",
+          "configuration": {}
+        },
+        {
+          "id": "fn-4-run",
+          "type": "runJavascript",
+          "configuration": {
+            "code": "function fn_4(input) {const{file_name}=input;const payload=fs.readFileSync(file_name);return{payload}}",
+            "name": "fn_4",
+            "raw": true
+          }
+        },
+        {
+          "id": "fn-4-output",
+          "type": "output",
+          "configuration": {}
+        }
+      ]
+    }
+  }
+}
