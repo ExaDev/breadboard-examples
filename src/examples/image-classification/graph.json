@@ -1,4 +1,5 @@
 {
+  "title": "Hugging Face Image Classification",
   "edges": [
     {
       "from": "main",

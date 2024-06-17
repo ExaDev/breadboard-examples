@@ -87,7 +87,9 @@ query("cat.jpg").then((response) => {
 	console.log("CLASSIFCATION RESULTS", JSON.stringify(response));
 });
 
-const serialised = await huggingFaceAudioTranscript.serialize();
+const serialised = await huggingFaceAudioTranscript.serialize({
+	title: "Hugging Face Image Classification",
+});
 export default serialised;
 fs.writeFileSync(
 	path.join(import.meta.dirname, "graph.json"),
