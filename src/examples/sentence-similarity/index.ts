@@ -14,7 +14,7 @@ const sentencesSchema = {
     type: "string",
     title: "sentences",
     default: "That is a happy dog, That is a very happy person,Today is a sunny day",
-    description: "A list of sentences to compare the source sentence to"
+    description: "Comma separated sentences we would like to compare to the source sentence"
 };
 
 const keySchema = {

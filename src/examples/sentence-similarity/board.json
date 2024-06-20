@@ -105,7 +105,7 @@
 							"type": "string",
 							"title": "sentences",
 							"default": "That is a happy dog, That is a very happy person,Today is a sunny day",
-							"description": "A list of sentences to compare the source sentence to"
+							"description": "Comma separated sentences we would like to compare to the source sentence"
 						},
 						"apiKey": {
 							"type": "string",
@@ -178,7 +178,7 @@
 					"id": "fn-4-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_4(input) {const{source_sentence,sentences}=input;const test=sentences.split(\",\");const payload={inputs:{source_sentence,sentences:test}};return{payload}}",
+						"code": "function fn_4(input) {const{source_sentence,sentences}=input;const splitSentence=sentences.split(\",\");const payload={inputs:{source_sentence,sentences:splitSentence}};return{payload}}",
 						"name": "fn_4",
 						"raw": true
 					}
