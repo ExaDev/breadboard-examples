@@ -37,18 +37,6 @@
 			"to": "fn-4",
 			"out": "inputs",
 			"in": "inputs"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "max_length",
-			"in": "max_length"
-		},
-		{
-			"from": "query",
-			"to": "fn-4",
-			"out": "num_return_sequences",
-			"in": "num_return_sequences"
 		}
 	],
 	"nodes": [
@@ -112,18 +100,6 @@
 							"title": "apiKey",
 							"default": "myKey",
 							"description": "The hugging face api key"
-						},
-						"max_length": {
-							"type": "number",
-							"title": "max_length",
-							"default": "100",
-							"description": "Max Length of the input"
-						},
-						"num_return_sequences": {
-							"type": "number",
-							"title": "num_return_sequences",
-							"default": "3",
-							"description": "Number of responses "
 						}
 					}
 				},
@@ -155,7 +131,7 @@
 					"id": "fn-3-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_3(inputs) {const key=inputs.key;const auth={Authorization:`Bearer ${key}`};return{auth}}",
+						"code": "function fn_3(inputs) {const key=inputs.key;const auth={Authorization:`Bearer ${key}`,\"content-type\":\"application/json\"};return{auth}}",
 						"name": "fn_3",
 						"raw": true
 					}
@@ -190,7 +166,7 @@
 					"id": "fn-4-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_4(input) {const{inputs,max_length,num_return_sequences}=input;const payload={inputs,parameters:{max_length,num_return_sequences}};return{payload}}",
+						"code": "function fn_4(input) {const{inputs}=input;const payload={inputs};return{payload}}",
 						"name": "fn_4",
 						"raw": true
 					}
