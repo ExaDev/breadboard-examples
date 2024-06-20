@@ -17,20 +17,6 @@ const keySchema = {
     description: "The hugging face api key"
 };
 
-const maxLengthSchema = {
-    type: "number",
-    title: "max_length",
-    default: "100",
-    description: "Max Length of the input"
-};
-
-const numberOfResponses = {
-    type: "number",
-    title: "num_of_responses",
-    default: "3",
-    description: "Number of responses to return"
-}
-
 export type HuggingFaceTextGenerationParams = {
     inputs: string
     parameters: {
@@ -46,18 +32,16 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ inputs: string, top_k: number, top_p: number, max_length: number, num_of_responses: number}>((input) => {
+const handleParams = code<{ inputs: string }>((input) => {
     const {
         inputs,
-        max_length,
-        num_of_responses
     } = input
 
     const payload: HuggingFaceTextGenerationParams = {
         inputs: inputs,
         parameters: {
-            max_length: max_length,
-            num_of_responses: num_of_responses
+            max_length: -1,
+            num_of_responses: 5
         }
     }
 
@@ -72,8 +56,6 @@ const serialized = await board(() => {
             properties: {
                 inputs: dataSchema,
                 apiKey: keySchema,
-                max_length: maxLengthSchema,
-                num_of_responses: numberOfResponses
             },
         },
         type: "string",
@@ -85,8 +67,6 @@ const serialized = await board(() => {
     const { auth } = authenticate({ key: inputs.apiKey.isString() })
     const { payload } = handleParams({
         inputs: inputs.inputs.isString(),
-        max_length: inputs.max_length.isNumber(),
-        num_of_responses: inputs.num_of_responses.isNumber()
     });
 
     const response = core.fetch({
