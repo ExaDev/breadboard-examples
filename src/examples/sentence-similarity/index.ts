@@ -11,9 +11,9 @@ const soruceSentenceSchema = {
 };
 
 const sentencesSchema = {
-    type: "array",
+    type: "string",
     title: "sentences",
-    default: "[That is a happy dog, That is a very happy person,Today is a sunny day]",
+    default: "That is a happy dog, That is a very happy person,Today is a sunny day",
     description: "A list of sentences to compare the source sentence to"
 };
 
@@ -38,17 +38,19 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ source_sentence: string, sentences: string[] }>((input) => {
+const handleParams = code<{ source_sentence: string, sentences: string }>((input) => {
     const { source_sentence, sentences } = input
 
-    const request: HuggingFaceSentenceSimilarityParams = {
+    const splitSentence = sentences.split(",")
+
+    const payload: HuggingFaceSentenceSimilarityParams = {
         inputs: {
             source_sentence: source_sentence,
-            sentences: sentences
+            sentences: splitSentence
         },
     };
 
-    const payload = JSON.stringify(request);
+   
 
     return { payload }
 });
@@ -73,7 +75,7 @@ const serialized = await board(() => {
     const { auth } = authenticate({ key: inputs.apiKey.isString() })
     const { payload } = handleParams({
         source_sentence: inputs.source_sentence.isString(),
-        sentences: inputs.sentences as unknown as string[],
+        sentences: inputs.sentences.isString(),
     });
 
     const response = core.fetch({
