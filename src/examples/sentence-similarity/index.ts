@@ -33,7 +33,7 @@ export type HuggingFaceSentenceSimilarityParams = {
 
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key
-    const auth = { Authorization: `Bearer ${key}` }
+    const auth = { Authorization: `Bearer ${key}` , "content-type": "application/json"}
 
     return { auth };
 });
@@ -68,9 +68,9 @@ const serialized = await board(() => {
     const task = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
     const output = base.output({ $id: "main" });
 
-    const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
+    const { auth } = authenticate({ key: inputs.apiKey.isString() })
     const { payload } = handleParams({
-        source_sentence: inputs.source_sentence as unknown as string,
+        source_sentence: inputs.source_sentence.isString(),
         sentences: inputs.sentences as unknown as string[],
     });
 
