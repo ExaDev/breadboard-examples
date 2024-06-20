@@ -84,9 +84,9 @@ const serialized = await board(() => {
 
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
     const { payload } = handleParams({
-        inputs: inputs.inputs as unknown as string,
-        max_length: inputs.max_length as unknown as number,
-        num_return_sequences: inputs.num_return_sequences as unknown as number
+        inputs: inputs.inputs.isString(),
+        max_length: inputs.max_length.isNumber(),
+        num_return_sequences: inputs.num_return_sequences.isNumber()
     });
 
     const response = core.fetch({
