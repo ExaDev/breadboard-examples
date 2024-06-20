@@ -1,5 +1,5 @@
-import { board, base, code } from "@google-labs/breadboard";
-import { core } from "@google-labs/core-kit";
+import { board, base, code, BoardRunner, asRuntimeKit } from "@google-labs/breadboard";
+import Core, { core } from "@google-labs/core-kit";
 import path from "path";
 import fs from "fs";
 
@@ -19,15 +19,12 @@ const keySchema = {
 
 export type HuggingFaceTextGenerationParams = {
     inputs: string
-    parameters: {
-        max_length: number;
-        num_of_responses: number;
-    }
+
 };
 
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key
-    const auth = { Authorization: `Bearer ${key}` }
+    const auth = { Authorization: `Bearer ${key}` , "content-type": "application/json"}
 
     return { auth };
 });
@@ -39,12 +36,8 @@ const handleParams = code<{ inputs: string }>((input) => {
 
     const payload: HuggingFaceTextGenerationParams = {
         inputs: inputs,
-        parameters: {
-            max_length: -1,
-            num_of_responses: 5
-        }
     }
-
+    
     return { payload }
 })
 

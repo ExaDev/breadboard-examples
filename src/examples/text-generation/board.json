@@ -131,7 +131,7 @@
 					"id": "fn-3-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_3(inputs) {const key=inputs.key;const auth={Authorization:`Bearer ${key}`};return{auth}}",
+						"code": "function fn_3(inputs) {const key=inputs.key;const auth={Authorization:`Bearer ${key}`,\"content-type\":\"application/json\"};return{auth}}",
 						"name": "fn_3",
 						"raw": true
 					}
@@ -166,7 +166,7 @@
 					"id": "fn-4-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_4(input) {const{inputs}=input;const payload={inputs,parameters:{max_length:-1,num_of_responses:5}};return{payload}}",
+						"code": "function fn_4(input) {const{inputs}=input;const payload={inputs};return{payload}}",
 						"name": "fn_4",
 						"raw": true
 					}
