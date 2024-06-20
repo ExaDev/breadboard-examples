@@ -83,14 +83,6 @@ const waitForModelSchema = {
 export type HuggingFaceSummarizationParams = {
     inputs: string
     parameters: {
-        min_length: number;
-        max_length: number;
-        top_k: number;
-        top_p: number;
-        temperature: number;
-        repetition_penalty: number;
-        max_time: number;
-
         options: {
             use_cache: boolean
             wait_for_model: boolean
@@ -105,15 +97,14 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ inputs: string, min_length: number, max_length: number, top_k: number, top_p: number, temperature: number, repetition_penalty: number, max_time: number }>((input) => {
-    const { inputs, min_length, max_length, top_k, top_p, temperature, repetition_penalty, max_time } = input
+const handleParams = code<{ inputs: string }>((input) => {
+    const { inputs } = input
     const request: HuggingFaceSummarizationParams = {
         inputs: inputs,
         parameters: {
-            min_length: min_length, max_length: max_length, top_k: top_k, top_p: top_p, temperature: temperature, repetition_penalty: repetition_penalty, max_time: max_time,
             options: {
-                use_cache: false,
-                wait_for_model: false
+                use_cache: true,
+                wait_for_model: true
             }
         }
     };
@@ -131,15 +122,6 @@ const serialized = await board(() => {
             properties: {
                 inputs: inputsSchema,
                 apiKey: keySchema,
-                min_length: minLengthSchema,
-                max_length: maxLengthSchema,
-                top_k: topKSchema,
-                top_p: topPSchema,
-                temperature: temperatureSchema,
-                repetition_penalty: repetitionPenaltySchema,
-                max_time: maxTimeSchema,
-                use_cache: useCacheSchema,
-                wait_for_model: waitForModelSchema
             },
         },
         type: "string",
@@ -151,13 +133,6 @@ const serialized = await board(() => {
     const { auth } = authenticate({ key: inputs.apiKey as unknown as string });
     const { payload } = handleParams({
         inputs: inputs.inputs as unknown as string,
-        min_length: inputs.min_length as unknown as number,
-        max_length: inputs.max_length as unknown as number,
-        top_k: inputs.top_k as unknown as number,
-        top_p: inputs.top_p as unknown as number,
-        temperature: inputs.temperature as unknown as number,
-        repetition_penalty: inputs.repetition as unknown as number,
-        max_time: inputs.max_time as unknown as number
     });
 
     const response = core.fetch({
