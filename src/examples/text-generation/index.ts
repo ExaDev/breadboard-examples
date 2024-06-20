@@ -24,18 +24,18 @@ const maxLengthSchema = {
     description: "Max Length of the input"
 };
 
-const numReturnSequencesSchema = {
+const numberOfResponses = {
     type: "number",
-    title: "num_return_sequences",
+    title: "num_of_responses",
     default: "3",
-    description: "Number of responses "
+    description: "Number of responses to return"
 }
 
 export type HuggingFaceTextGenerationParams = {
     inputs: string
     parameters: {
         max_length: number;
-        num_return_sequences: number;
+        num_of_responses: number;
     }
 };
 
@@ -46,18 +46,18 @@ const authenticate = code<{ key: string }>((inputs) => {
     return { auth };
 });
 
-const handleParams = code<{ inputs: string, top_k: number, top_p: number, max_length: number, num_return_sequences: number}>((input) => {
+const handleParams = code<{ inputs: string, top_k: number, top_p: number, max_length: number, num_of_responses: number}>((input) => {
     const {
         inputs,
         max_length,
-        num_return_sequences
+        num_of_responses
     } = input
 
     const payload: HuggingFaceTextGenerationParams = {
         inputs: inputs,
         parameters: {
             max_length: max_length,
-            num_return_sequences: num_return_sequences
+            num_of_responses: num_of_responses
         }
     }
 
@@ -73,7 +73,7 @@ const serialized = await board(() => {
                 inputs: dataSchema,
                 apiKey: keySchema,
                 max_length: maxLengthSchema,
-                num_return_sequences: numReturnSequencesSchema
+                num_of_responses: numberOfResponses
             },
         },
         type: "string",
@@ -82,11 +82,11 @@ const serialized = await board(() => {
     const task = "https://api-inference.huggingface.co/models/openai-community/gpt2"
     const output = base.output({ $id: "main" });
 
-    const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
+    const { auth } = authenticate({ key: inputs.apiKey.isString() })
     const { payload } = handleParams({
         inputs: inputs.inputs.isString(),
         max_length: inputs.max_length.isNumber(),
-        num_return_sequences: inputs.num_return_sequences.isNumber()
+        num_of_responses: inputs.num_of_responses.isNumber()
     });
 
     const response = core.fetch({

@@ -47,8 +47,8 @@
 		{
 			"from": "query",
 			"to": "fn-4",
-			"out": "num_return_sequences",
-			"in": "num_return_sequences"
+			"out": "num_of_responses",
+			"in": "num_of_responses"
 		}
 	],
 	"nodes": [
@@ -119,11 +119,11 @@
 							"default": "100",
 							"description": "Max Length of the input"
 						},
-						"num_return_sequences": {
+						"num_of_responses": {
 							"type": "number",
-							"title": "num_return_sequences",
+							"title": "num_of_responses",
 							"default": "3",
-							"description": "Number of responses "
+							"description": "Number of responses to return"
 						}
 					}
 				},
@@ -190,7 +190,7 @@
 					"id": "fn-4-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_4(input) {const{inputs,max_length,num_return_sequences}=input;const payload={inputs,parameters:{max_length,num_return_sequences}};return{payload}}",
+						"code": "function fn_4(input) {const{inputs,max_length,num_of_responses}=input;const payload={inputs,parameters:{max_length,num_of_responses}};return{payload}}",
 						"name": "fn_4",
 						"raw": true
 					}
