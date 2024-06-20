@@ -11,10 +11,10 @@ const soruceSentenceSchema = {
 };
 
 const sentencesSchema = {
-    type: "list",
+    type: "string",
     title: "sentences",
-    default: "[That is a happy dog, That is a very happy person,Today is a sunny day]",
-    description: "A list of sentences to compare the source sentence to"
+    default: "That is a happy dog, That is a very happy person,Today is a sunny day",
+    description: "Comma separated sentences we would like to compare to the source sentence"
 };
 
 const keySchema = {
@@ -33,20 +33,24 @@ export type HuggingFaceSentenceSimilarityParams = {
 
 const authenticate = code<{ key: string }>((inputs) => {
     const key = inputs.key
-    const auth = { Authorization: `Bearer ${key}` }
+    const auth = { Authorization: `Bearer ${key}` , "content-type": "application/json"}
 
     return { auth };
 });
 
-const handleParams = code<{ source_sentence: string, sentences: string[] }>((input) => {
+const handleParams = code<{ source_sentence: string, sentences: string }>((input) => {
     const { source_sentence, sentences } = input
 
+    const splitSentence = sentences.split(",")
+
     const payload: HuggingFaceSentenceSimilarityParams = {
-        "inputs": {
+        inputs: {
             source_sentence: source_sentence,
-            sentences: sentences
+            sentences: splitSentence
         },
     };
+
+   
 
     return { payload }
 });
@@ -68,10 +72,10 @@ const serialized = await board(() => {
     const task = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
     const output = base.output({ $id: "main" });
 
-    const { auth } = authenticate({ key: inputs.apiKey as unknown as string })
+    const { auth } = authenticate({ key: inputs.apiKey.isString() })
     const { payload } = handleParams({
-        source_sentence: inputs.source_sentence as unknown as string,
-        sentences: inputs.sentences as unknown as string[],
+        source_sentence: inputs.source_sentence.isString(),
+        sentences: inputs.sentences.isString(),
     });
 
     const response = core.fetch({

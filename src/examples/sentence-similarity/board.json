@@ -102,10 +102,10 @@
 							"description": "The data to send to the hugging face api sentence similarity endpoint"
 						},
 						"sentences": {
-							"type": "list",
+							"type": "string",
 							"title": "sentences",
-							"default": "[That is a happy dog, That is a very happy person,Today is a sunny day]",
-							"description": "A list of sentences to compare the source sentence to"
+							"default": "That is a happy dog, That is a very happy person,Today is a sunny day",
+							"description": "Comma separated sentences we would like to compare to the source sentence"
 						},
 						"apiKey": {
 							"type": "string",
@@ -143,7 +143,7 @@
 					"id": "fn-3-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_3(inputs) {const key=inputs.key;const auth={Authorization:`Bearer ${key}`};return{auth}}",
+						"code": "function fn_3(inputs) {const key=inputs.key;const auth={Authorization:`Bearer ${key}`,\"content-type\":\"application/json\"};return{auth}}",
 						"name": "fn_3",
 						"raw": true
 					}
@@ -178,7 +178,7 @@
 					"id": "fn-4-run",
 					"type": "runJavascript",
 					"configuration": {
-						"code": "function fn_4(input) {const{source_sentence,sentences}=input;const payload={\"inputs\":{source_sentence,sentences}};console.log(\"payload\",payload);return{payload}}",
+						"code": "function fn_4(input) {const{source_sentence,sentences}=input;const splitSentence=sentences.split(\",\");const payload={inputs:{source_sentence,sentences:splitSentence}};return{payload}}",
 						"name": "fn_4",
 						"raw": true
 					}
