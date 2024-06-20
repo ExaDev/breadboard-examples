@@ -11,7 +11,7 @@ const soruceSentenceSchema = {
 };
 
 const sentencesSchema = {
-    type: "list",
+    type: "array",
     title: "sentences",
     default: "[That is a happy dog, That is a very happy person,Today is a sunny day]",
     description: "A list of sentences to compare the source sentence to"
@@ -41,12 +41,14 @@ const authenticate = code<{ key: string }>((inputs) => {
 const handleParams = code<{ source_sentence: string, sentences: string[] }>((input) => {
     const { source_sentence, sentences } = input
 
-    const payload: HuggingFaceSentenceSimilarityParams = {
-        "inputs": {
+    const request: HuggingFaceSentenceSimilarityParams = {
+        inputs: {
             source_sentence: source_sentence,
             sentences: sentences
         },
     };
+
+    const payload = JSON.stringify(request);
 
     return { payload }
 });
