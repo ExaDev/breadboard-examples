@@ -1,8 +1,14 @@
-import { board, input, output } from "@breadboard-ai/build";
-import { BoardRunner, GraphDescriptor, OutputValues } from "@google-labs/breadboard";
+import { board, input, output, serialize } from "@breadboard-ai/build";
+import {
+	BoardRunner,
+	GraphDescriptor,
+	Kit,
+	OutputValues,
+	asRuntimeKit,
+} from "@google-labs/breadboard";
 import { RunConfig, run } from "@google-labs/breadboard/harness";
 import { InputResolveRequest } from "@google-labs/breadboard/remote";
-import { code } from "@google-labs/core-kit";
+import Core, { code } from "@google-labs/core-kit";
 
 const text = input({
 	type: "string",
@@ -29,7 +35,7 @@ const message = code(
 	}
 );
 
-const myBoard = board({
+const boardInstance = board({
 	title: "MY HELLO WORLD BOARD",
 	inputs: { text },
 	outputs: {
@@ -40,13 +46,17 @@ const myBoard = board({
 	},
 });
 
-const runner = await BoardRunner.fromGraphDescriptor(
-	myBoard as unknown as GraphDescriptor
+const serialisedBoard: GraphDescriptor = serialize(boardInstance);
+
+const runner: BoardRunner = await BoardRunner.fromGraphDescriptor(
+	serialisedBoard
 );
+
+const runTimeKits: Kit[] = [asRuntimeKit(Core)];
 
 const runConfig: RunConfig = {
 	url: ".",
-	kits: [],
+	kits: runTimeKits,
 	remote: undefined,
 	proxy: undefined,
 	diagnostics: true,
@@ -62,9 +72,6 @@ for await (const runResult of run(runConfig)) {
 		} satisfies InputResolveRequest);
 	} else if (runResult.type === "output") {
 		const resultOutputs: OutputValues = runResult.data.outputs;
-		console.log(
-			"output with Kit",
-			JSON.stringify(resultOutputs, null, 2)
-		);
+		console.log("output with Kit", JSON.stringify(resultOutputs, null, 2));
 	}
 }
