@@ -1,4 +1,10 @@
-import { board, input, output, serialize } from "@breadboard-ai/build";
+import {
+	board,
+	defineNodeType,
+	input,
+	output,
+	serialize,
+} from "@breadboard-ai/build";
 import {
 	BoardRunner,
 	GraphDescriptor,
@@ -7,43 +13,31 @@ import {
 	asRuntimeKit,
 } from "@google-labs/breadboard";
 import { RunConfig, run } from "@google-labs/breadboard/harness";
-import { InputResolveRequest } from "@google-labs/breadboard/remote";
-import Core, { code } from "@google-labs/core-kit";
+import { KitBuilder } from "@google-labs/breadboard/kits";
 
-const text = input({
-	type: "string",
-	title: "Text",
-	description: "The text to output",
-	examples: ["What is the square root of pi?"],
-	default: "What is the square root of pi?",
+import { Core } from "@google-labs/core-kit";
+import { makeFiles } from "../../util/merMake.js";
+import { InputResolveRequest } from "@google-labs/breadboard/remote";
+
+
+const myPassthrough = defineNodeType({
+	name: "myPassthrough",
+	inputs: {
+		message: { type: "string" },
+	},
+	outputs: {
+		pOut: { type: "string" },
+	},
+	invoke: (inputs) => { return { pOut: inputs.message } },
 });
 
-const message = code(
-	{
-		$id: "text",
-		$metadata: {
-			title: "text",
-			description: "my message to return",
-		},
-		text,
-	},
-	{
-		message: "string",
-	},
-	({ text }) => {
-		return { message: text };
-	}
-);
+const inputMessage = input({ type: "string" });
 
+const passthroughInstance = myPassthrough({ message: inputMessage });
 const boardInstance = board({
-	title: "MY HELLO WORLD BOARD",
-	inputs: { text },
-	outputs: {
-		message: output(message.outputs.message, {
-			title: "Hello World Output",
-			description: "The generated tool calls",
-		}),
-	},
+	inputs: { inputMessage },
+
+	outputs: { message: output(passthroughInstance.outputs.pOut) },
 });
 
 const serialisedBoard: GraphDescriptor = serialize(boardInstance);
@@ -52,7 +46,14 @@ const runner: BoardRunner = await BoardRunner.fromGraphDescriptor(
 	serialisedBoard
 );
 
-const runTimeKits: Kit[] = [asRuntimeKit(Core)];
+const runTimeKits: Kit[] = [
+	asRuntimeKit(Core),
+	asRuntimeKit(
+		new KitBuilder({
+			url: ".",
+		}).build({ myPassthrough: myPassthrough })
+	),
+];
 
 const runConfig: RunConfig = {
 	url: ".",
@@ -63,15 +64,18 @@ const runConfig: RunConfig = {
 	runner: runner,
 };
 
+
 for await (const runResult of run(runConfig)) {
 	if (runResult.type === "input") {
 		await runResult.reply({
 			inputs: {
-				text: "What is the square root of pi?",
+				inputMessage: "What is the square root of pi?",
 			},
 		} satisfies InputResolveRequest);
 	} else if (runResult.type === "output") {
 		const resultOutputs: OutputValues = runResult.data.outputs;
 		console.log("output with Kit", JSON.stringify(resultOutputs, null, 2));
-	}
+	} 
 }
+
+await makeFiles({ graph: serialisedBoard });
