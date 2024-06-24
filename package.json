@@ -10,6 +10,10 @@
 		"tsx": "^4.15.7",
 		"typescript": "^5.5.2"
 	},
+	"engines": {
+		"node": ">=20.14.0 <=21"
+	},
+	"engineStrict": true,
 	"scripts": {
 		"code-node": "tsx src/examples/code-node/index.ts",
 		"code-node-dynamic": "tsx src/examples/code-node-dynamic/index.ts",
