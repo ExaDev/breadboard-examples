@@ -1,14 +1,14 @@
 {
 	"dependencies": {
 		"@breadboard-ai/build": "^0.6.0",
-		"@google-labs/breadboard": "0.11.2",
+		"@google-labs/breadboard": "0.20.0",
 		"@google-labs/core-kit": "^0.9.0",
-		"@xenova/transformers": "^2.15.1"
+		"@xenova/transformers": "^2.17.2"
 	},
 	"devDependencies": {
-		"@types/node": "^20.11.20",
-		"tsx": "^4.7.1",
-		"typescript": "^5.3.3"
+		"@types/node": "^20.14.8",
+		"tsx": "^4.15.7",
+		"typescript": "^5.5.2"
 	},
 	"scripts": {
 		"code-node": "tsx src/examples/code-node/index.ts",
