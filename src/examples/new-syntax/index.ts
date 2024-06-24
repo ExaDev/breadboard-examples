@@ -1,6 +1,7 @@
 import { board, input, output } from "@breadboard-ai/build";
-import { BoardRunner, GraphDescriptor } from "@google-labs/breadboard";
+import { BoardRunner, GraphDescriptor, OutputValues } from "@google-labs/breadboard";
 import { RunConfig, run } from "@google-labs/breadboard/harness";
+import { InputResolveRequest } from "@google-labs/breadboard/remote";
 import { code } from "@google-labs/core-kit";
 
 const text = input({
@@ -54,15 +55,16 @@ const runConfig: RunConfig = {
 
 for await (const runResult of run(runConfig)) {
 	if (runResult.type === "input") {
-		runResult.reply({
+		await runResult.reply({
 			inputs: {
 				text: "What is the square root of pi?",
 			},
-		});
+		} satisfies InputResolveRequest);
 	} else if (runResult.type === "output") {
+		const resultOutputs: OutputValues = runResult.data.outputs;
 		console.log(
 			"output with Kit",
-			JSON.stringify(runResult.data.outputs, null, 2)
+			JSON.stringify(resultOutputs, null, 2)
 		);
 	}
 }
