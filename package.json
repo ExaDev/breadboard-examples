@@ -1,8 +1,8 @@
 {
 	"dependencies": {
-		"@breadboard-ai/build": "^0.6.0",
-		"@google-labs/breadboard": "0.20.0",
-		"@google-labs/core-kit": "^0.9.0",
+		"@breadboard-ai/build": "^0.10.5",
+		"@google-labs/breadboard": "0.29.0",
+		"@google-labs/core-kit": "^0.16.0",
 		"@xenova/transformers": "^2.17.2"
 	},
 	"devDependencies": {
